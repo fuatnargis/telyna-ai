@@ -25,9 +25,7 @@ export function useAuth(): UseAuthReturn {
 
   useEffect(() => {
     const unsubscribe = authService.onAuthStateChange(async (authUserFromService) => {
-      if (isInitialAuthCheckComplete.current) {
-        setLoading(true); 
-      }
+      // Bu satır kaldırıldı: if (isInitialAuthCheckComplete.current) { setLoading(true); }
       
       setUser(authUserFromService);
       
