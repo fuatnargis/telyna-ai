@@ -46,14 +46,18 @@ function App() {
   
   // Check authentication status on app load
   useEffect(() => {
+    console.log('App: useEffect triggered. Current appState:', appState, 'loading:', loading, 'authUser:', authUser ? authUser.id : 'null', 'profile:', profile ? 'present' : 'null', 'hasSeenOnboarding:', hasSeenOnboarding);
+
     // İlk olarak onboarding durumunu kontrol et
     if (!hasSeenOnboarding) {
+      console.log('App: Setting appState to onboarding (hasSeenOnboarding is false).');
       setAppState('onboarding');
       return;
     }
 
     // Kimlik doğrulama veya profil verileri yükleniyorsa 'optimizing' ekranını göster
     if (loading) {
+      console.log('App: Loading is true. Setting appState to optimizing.');
       setAppState('optimizing');
       return;
     }
@@ -61,11 +65,14 @@ function App() {
     // Yükleme tamamlandıktan sonra kullanıcı durumuna göre yönlendirme yap
     if (authUser) {
       if (!profile?.isProfileComplete) {
+        console.log('App: AuthUser present, profile incomplete or null. Setting appState to profile-setup.');
         setAppState('profile-setup');
       } else {
+        console.log('App: AuthUser present, profile complete. Setting appState to home.');
         setAppState('home');
       }
     } else {
+      console.log('App: No authUser. Setting appState to auth.');
       setAppState('auth');
     }
   }, [authUser, profile, loading, hasSeenOnboarding]); // 'loading' durumunu bağımlılıklara ekliyoruz
