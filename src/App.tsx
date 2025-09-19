@@ -218,8 +218,15 @@ function App() {
 
   // 'optimizing' durumu için özel bir yükleme ekranı göster
   if (appState === 'optimizing') {
-    // Eğer pendingChat yoksa ve loading true ise, genel bir yükleme ekranı göster
-    if (!pendingChat && loading) {
+    if (pendingChat) {
+      return (
+        <OptimizationScreen
+          country={pendingChat.country}
+          purpose={pendingChat.purpose}
+          onComplete={handleOptimizationComplete}
+        />
+      );
+    } else { // Bu blok, !pendingChat ve loading true olduğunda veya diğer optimizing durumlarında çalışır.
       return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
           <div className="flex items-center gap-3 text-white">
@@ -229,25 +236,6 @@ function App() {
         </div>
       );
     }
-    // Eğer pendingChat varsa, OptimizationScreen bileşenini göster
-    if (pendingChat) {
-      return (
-        <OptimizationScreen
-          country={pendingChat.country}
-          purpose={pendingChat.purpose}
-          onComplete={handleOptimizationComplete}
-        />
-      );
-    }
-    // Diğer optimizing durumları için (örneğin, auth sonrası profil yüklenirken)
-    return (
-      <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
-        <div className="flex items-center gap-3 text-white">
-          <div className="w-8 h-8 animate-spin rounded-full border-2 border-slate-500 border-t-blue-500" />
-          <span className="text-lg">Verileriniz yükleniyor...</span>
-        </div>
-      </div>
-    );
   }
 
   // Render based on current state
