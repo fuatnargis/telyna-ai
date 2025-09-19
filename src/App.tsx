@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-import { useAuth } from './hooks/useAuth'; // Firebase kimlik doğrulama hook'unu etkinleştiriyoruz
+import { useAuth } from './hooks/useAuth';
 import OnboardingPage from './components/pages/OnboardingPage';
 import AuthPage from './components/pages/AuthPage';
 import ProfileSetupPage from './components/pages/ProfileSetupPage';
@@ -42,63 +42,23 @@ function App() {
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [pendingChat, setPendingChat] = useState<{ country: string; purpose: Purpose } | null>(null);
   
-  // Firebase authentication
   const { user: authUser, profile, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword, updatePassword } = useAuth();
   
-  // Temporary mock authentication for demo - KALDIRILDI
-  // const [authUser, setAuthUser] = useState<any>(null);
-  // const [profile, setProfile] = useState<any>(null);
-  // const [loading, setLoading] = useState(false);
-  
-  // const signUp = async (email: string, password: string, name: string) => {
-  //   setLoading(true);
-  //   setTimeout(() => {
-  //     const mockUser = { id: '1', email, name };
-  //     setAuthUser(mockUser);
-  //     setLoading(false);
-  //   }, 1000);
-  //   return { error: null };
-  // };
-  
-  // const signIn = async (email: string, password: string) => {
-  //   setLoading(true);
-  //   setTimeout(() => {
-  //     const mockUser = { id: '1', email, name: 'Demo User' };
-  //     setAuthUser(mockUser);
-  //     setLoading(false);
-  //   }, 1000);
-  //   return { error: null };
-  // };
-  
-  // const signInWithGoogle = async () => {
-  //   setLoading(true);
-  //   setTimeout(() => {
-  //     const mockUser = { id: '1', email: 'demo@gmail.com', name: 'Google User' };
-  //     setAuthUser(mockUser);
-  //     setLoading(false);
-  //   }, 1000);
-  //   return { error: null };
-  // };
-  
-  // const signOut = async () => {
-  //   setAuthUser(null);
-  //   setProfile(null);
-  //   return { error: null };
-  // };
-  
-  // const updateProfile = async (updates: any) => {
-  //   setProfile(prev => ({ ...prev, ...updates }));
-  //   return { error: null };
-  // };
-
   // Check authentication status on app load
   useEffect(() => {
-    // First check if user has seen onboarding
+    // İlk olarak onboarding durumunu kontrol et
     if (!hasSeenOnboarding) {
       setAppState('onboarding');
       return;
     }
 
+    // Kimlik doğrulama veya profil verileri yükleniyorsa 'optimizing' ekranını göster
+    if (loading) {
+      setAppState('optimizing');
+      return;
+    }
+
+    // Yükleme tamamlandıktan sonra kullanıcı durumuna göre yönlendirme yap
     if (authUser) {
       if (!profile?.isProfileComplete) {
         setAppState('profile-setup');
@@ -108,28 +68,20 @@ function App() {
     } else {
       setAppState('auth');
     }
-  }, [authUser, profile, hasSeenOnboarding]);
+  }, [authUser, profile, loading, hasSeenOnboarding]); // 'loading' durumunu bağımlılıklara ekliyoruz
 
   const handleOnboardingComplete = () => {
     setHasSeenOnboarding(true);
-    if (authUser) {
-      if (!profile?.isProfileComplete) {
-        setAppState('profile-setup');
-      } else {
-        setAppState('home');
-      }
-    } else {
-      setAppState('auth');
-    }
+    // Onboarding tamamlandıktan sonra, useEffect authUser ve profile durumuna göre yönlendirecektir.
   };
   
   const handleAuthSuccess = async () => {
-    // Auth success is handled by useAuth hook
-    // State will be updated automatically
+    // Kimlik doğrulama başarılı olduğunda, useEffect authUser ve profile durumuna göre yönlendirecektir.
+    // Bu fonksiyonun içi boş kalabilir, çünkü useEffect zaten durumu izliyor.
   };
 
   const handleResetPassword = (newPassword: string, confirmPassword: string) => {
-    // Password reset is handled in ResetPasswordPage
+    // Şifre sıfırlama ResetPasswordPage'de ele alınır
     setAppState('auth');
   };
 
@@ -163,7 +115,6 @@ function App() {
         messages: []
       };
       
-      // Add to localStorage
       setPastChats(prev => [newChat, ...prev]);
       
       setCurrentChat(newChat);
@@ -240,7 +191,6 @@ function App() {
   };
 
   const handlePremiumAdContinue = () => {
-    // Premium subscription logic would go here
     setAppState('home');
   };
 
@@ -261,16 +211,40 @@ function App() {
     isProfileComplete: profile.isProfileComplete
   } : null;
 
-  if (loading) {
+  // 'optimizing' durumu için özel bir yükleme ekranı göster
+  if (appState === 'optimizing') {
+    // Eğer pendingChat yoksa ve loading true ise, genel bir yükleme ekranı göster
+    if (!pendingChat && loading) {
+      return (
+        <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
+          <div className="flex items-center gap-3 text-white">
+            <div className="w-8 h-8 animate-spin rounded-full border-2 border-slate-500 border-t-blue-500" />
+            <span className="text-lg">Yükleniyor...</span>
+          </div>
+        </div>
+      );
+    }
+    // Eğer pendingChat varsa, OptimizationScreen bileşenini göster
+    if (pendingChat) {
+      return (
+        <OptimizationScreen
+          country={pendingChat.country}
+          purpose={pendingChat.purpose}
+          onComplete={handleOptimizationComplete}
+        />
+      );
+    }
+    // Diğer optimizing durumları için (örneğin, auth sonrası profil yüklenirken)
     return (
       <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
         <div className="flex items-center gap-3 text-white">
           <div className="w-8 h-8 animate-spin rounded-full border-2 border-slate-500 border-t-blue-500" />
-          <span className="text-lg">Yükleniyor...</span>
+          <span className="text-lg">Verileriniz yükleniyor...</span>
         </div>
       </div>
     );
   }
+
   // Render based on current state
   switch (appState) {
     case 'onboarding':
@@ -287,16 +261,16 @@ function App() {
           signIn={signIn}
           signInWithGoogle={signInWithGoogle}
           onAuthSuccess={handleAuthSuccess}
-          onForgotPassword={() => setAppState('reset-password')} // Şifre sıfırlama sayfasına yönlendirme
+          onForgotPassword={() => setAppState('reset-password')}
         />
       );
 
     case 'reset-password':
       return (
         <ResetPasswordPage
-          onResetPassword={resetPassword} // useAuth'tan gelen resetPassword fonksiyonunu kullan
+          onResetPassword={resetPassword}
           onBack={handleBackToAuth}
-          updatePassword={updatePassword} // useAuth'tan gelen updatePassword fonksiyonunu kullan
+          updatePassword={updatePassword}
         />
       );
 
@@ -322,16 +296,6 @@ function App() {
           onStartChat={handleStartChat}
           onOpenChat={handleOpenChat}
           onOpenProfile={handleOpenProfile}
-        />
-      );
-
-    case 'optimizing':
-      if (!pendingChat) return null;
-      return (
-        <OptimizationScreen
-          country={pendingChat.country}
-          purpose={pendingChat.purpose}
-          onComplete={handleOptimizationComplete}
         />
       );
 
@@ -411,7 +375,7 @@ function App() {
     default:
       return (
         <div className="min-h-screen bg-slate-900 flex items-center justify-center">
-          <p className="text-white">Loading...</p>
+          <p className="text-white">Yükleniyor...</p>
         </div>
       );
   }
