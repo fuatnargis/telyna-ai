@@ -51,21 +51,31 @@ function App() {
   
   // Check authentication status on app load
   useEffect(() => {
+    console.log('App.tsx useEffect: Running state determination.');
+    console.log(`  isFirebaseConfigured: ${isFirebaseConfigured}`);
+    console.log(`  hasSeenOnboarding: ${hasSeenOnboarding}`);
+    console.log(`  useAuth.loading: ${loading}`);
+    console.log(`  useAuth.authUser: ${authUser ? authUser.email : 'null'}`);
+    console.log(`  useAuth.profile: ${profile ? profile.name : 'null'}`);
+
     // Firebase yapılandırması eksikse hata ekranına yönlendir
     if (!isFirebaseConfigured) {
       setAppState('error-firebase-config');
+      console.log('App.tsx useEffect: Setting appState to error-firebase-config.');
       return;
     }
 
     // İlk olarak onboarding durumunu kontrol et
     if (!hasSeenOnboarding) {
       setAppState('onboarding');
+      console.log('App.tsx useEffect: Setting appState to onboarding.');
       return;
     }
 
     // Kimlik doğrulama veya profil verileri yükleniyorsa 'optimizing' ekranını göster
     if (loading) {
       setAppState('optimizing');
+      console.log('App.tsx useEffect: Setting appState to optimizing (due to useAuth.loading).');
       return;
     }
 
@@ -73,13 +83,17 @@ function App() {
     if (authUser) {
       if (!profile) {
         setAppState('profile-setup');
+        console.log('App.tsx useEffect: Setting appState to profile-setup (no profile found).');
       } else if (!profile.isProfileComplete) {
         setAppState('profile-setup');
+        console.log('App.tsx useEffect: Setting appState to profile-setup (profile incomplete).');
       } else {
         setAppState('home');
+        console.log('App.tsx useEffect: Setting appState to home.');
       }
     } else {
       setAppState('auth');
+      console.log('App.tsx useEffect: Setting appState to auth (no authUser).');
     }
   }, [authUser, profile, loading, hasSeenOnboarding, isFirebaseConfigured]); // isFirebaseConfigured bağımlılıklara eklendi
 
