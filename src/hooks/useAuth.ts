@@ -25,42 +25,33 @@ export function useAuth(): UseAuthReturn {
 
   useEffect(() => {
     const unsubscribe = authService.onAuthStateChange(async (authUserFromService) => {
-      console.log('useAuth: onAuthStateChange triggered. authUserFromService:', authUserFromService ? authUserFromService.id : 'null');
       if (isInitialAuthCheckComplete.current) {
         setLoading(true); 
-        console.log('useAuth: Setting loading to true (subsequent auth change)');
-      } else {
-        console.log('useAuth: Initial auth check. Loading already true.');
       }
       
       setUser(authUserFromService);
       
       try { 
         if (authUserFromService) {
-          console.log('useAuth: Fetching user profile for:', authUserFromService.id);
           const userProfile = await authService.getUserProfile(authUserFromService.id);
           setProfile(userProfile);
-          console.log('useAuth: User profile fetched:', userProfile ? 'present' : 'null');
           const emailVerified = authService.checkEmailVerification();
           setIsEmailVerified(emailVerified);
         } else {
-          console.log('useAuth: No authUserFromService. Setting profile to null.');
           setProfile(null);
           setIsEmailVerified(false);
         }
       } catch (error) {
-        console.error('useAuth: Error fetching user profile in onAuthStateChange:', error);
+        console.error('Error fetching user profile in onAuthStateChange:', error);
         setProfile(null); 
         setIsEmailVerified(false);
       } finally {
         setLoading(false); 
-        console.log('useAuth: Setting loading to false. isInitialAuthCheckComplete:', isInitialAuthCheckComplete.current);
         isInitialAuthCheckComplete.current = true; // Mark initial check as complete
       }
     });
 
     return () => {
-      console.log('useAuth: Cleaning up onAuthStateChange subscription.');
       unsubscribe();
     };
   }, []);

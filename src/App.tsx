@@ -46,36 +46,34 @@ function App() {
   
   // Check authentication status on app load
   useEffect(() => {
-    console.log('App: useEffect triggered. Current appState:', appState, 'loading:', loading, 'authUser:', authUser ? authUser.id : 'null', 'profile:', profile ? 'present' : 'null', 'hasSeenOnboarding:', hasSeenOnboarding);
-
     // İlk olarak onboarding durumunu kontrol et
     if (!hasSeenOnboarding) {
-      console.log('App: Setting appState to onboarding (hasSeenOnboarding is false).');
       setAppState('onboarding');
       return;
     }
 
     // Kimlik doğrulama veya profil verileri yükleniyorsa 'optimizing' ekranını göster
     if (loading) {
-      console.log('App: Loading is true. Setting appState to optimizing.');
       setAppState('optimizing');
       return;
     }
 
     // Yükleme tamamlandıktan sonra kullanıcı durumuna göre yönlendirme yap
     if (authUser) {
-      if (!profile?.isProfileComplete) {
-        console.log('App: AuthUser present, profile incomplete or null. Setting appState to profile-setup.');
+      // authUser mevcut ama profil henüz yüklenmediyse veya null ise optimizing'de kal
+      // useAuth'taki loading durumu, profilin yüklenmesini de kapsadığı için bu kontrol yeterli.
+      // Eğer loading false ise ve authUser var ama profile null ise, profilin oluşturulması gerekiyor.
+      if (!profile) {
+        setAppState('profile-setup');
+      } else if (!profile.isProfileComplete) {
         setAppState('profile-setup');
       } else {
-        console.log('App: AuthUser present, profile complete. Setting appState to home.');
         setAppState('home');
       }
     } else {
-      console.log('App: No authUser. Setting appState to auth.');
       setAppState('auth');
     }
-  }, [authUser, profile, loading, hasSeenOnboarding]); // 'loading' durumunu bağımlılıklara ekliyoruz
+  }, [authUser, profile, loading, hasSeenOnboarding]);
 
   const handleOnboardingComplete = () => {
     setHasSeenOnboarding(true);
@@ -226,7 +224,7 @@ function App() {
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
           <div className="flex items-center gap-3 text-white">
             <div className="w-8 h-8 animate-spin rounded-full border-2 border-slate-500 border-t-blue-500" />
-            <span className="text-lg">Yükleniyor...</span>
+            <span className="text-lg">Verileriniz yükleniyor...</span>
           </div>
         </div>
       );
