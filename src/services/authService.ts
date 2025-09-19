@@ -64,6 +64,10 @@ export class AuthService {
 
   // E-posta ve şifre ile kayıt
   async signUpWithEmail(email: string, password: string, name: string): Promise<AuthResponse> {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return { user: null, error: 'Firebase Auth service is not initialized.' };
+    }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
       const firebaseUser = userCredential.user;
@@ -75,7 +79,10 @@ export class AuthService {
       authUser.name = name;
 
       // Kullanıcı profilini Firestore'da oluştur
-      await this.createUserProfile(authUser, name);
+      const profileCreationResult = await this.createUserProfile(authUser, name);
+      if (profileCreationResult.error) {
+        return { user: null, error: profileCreationResult.error };
+      }
 
       return { user: authUser, error: null };
     } catch (error: any) {
@@ -100,6 +107,10 @@ export class AuthService {
 
   // E-posta ve şifre ile giriş
   async signInWithEmail(email: string, password: string): Promise<AuthResponse> {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return { user: null, error: 'Firebase Auth service is not initialized.' };
+    }
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const authUser = this.firebaseUserToAuthUser(userCredential.user);
@@ -130,6 +141,10 @@ export class AuthService {
 
   // Google ile giriş
   async signInWithGoogle(): Promise<AuthResponse> {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return { user: null, error: 'Firebase Auth service is not initialized.' };
+    }
     try {
       const result = await signInWithPopup(auth, this.googleProvider);
       const authUser = this.firebaseUserToAuthUser(result.user);
@@ -137,7 +152,10 @@ export class AuthService {
       // Google ile ilk kez giriş yapıyorsa profil oluştur
       const existingProfile = await this.getUserProfile(authUser.id);
       if (!existingProfile) {
-        await this.createUserProfile(authUser, authUser.name || authUser.email.split('@')[0]);
+        const profileCreationResult = await this.createUserProfile(authUser, authUser.name || authUser.email.split('@')[0]);
+        if (profileCreationResult.error) {
+          return { user: null, error: profileCreationResult.error };
+        }
       }
 
       return { user: authUser, error: null };
@@ -160,6 +178,10 @@ export class AuthService {
 
   // Şifre sıfırlama
   async resetPassword(email: string): Promise<{ error: string | null }> {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return { error: 'Firebase Auth service is not initialized.' };
+    }
     try {
       await sendPasswordResetEmail(auth, email);
       return { error: null };
@@ -182,6 +204,10 @@ export class AuthService {
 
   // Şifre güncelleme
   async updatePassword(newPassword: string): Promise<{ error: string | null }> {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return { error: 'Firebase Auth service is not initialized.' };
+    }
     try {
       if (!auth.currentUser) {
         return { error: 'Kullanıcı oturumu bulunamadı' };
@@ -208,6 +234,10 @@ export class AuthService {
 
   // Çıkış yap
   async signOut(): Promise<{ error: string | null }> {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return { error: 'Firebase Auth service is not initialized.' };
+    }
     try {
       await firebaseSignOut(auth);
       return { error: null };
@@ -219,12 +249,20 @@ export class AuthService {
 
   // Mevcut kullanıcıyı al
   getCurrentUser(): AuthUser | null {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return null;
+    }
     const firebaseUser = auth.currentUser;
     return firebaseUser ? this.firebaseUserToAuthUser(firebaseUser) : null;
   }
 
   // Kullanıcı profili oluştur
-  async createUserProfile(authUser: AuthUser, name: string): Promise<void> {
+  async createUserProfile(authUser: AuthUser, name: string): Promise<{ error: string | null }> {
+    if (!db) {
+      console.error('Firestore service is not initialized.');
+      return { error: 'Firestore service is not initialized.' };
+    }
     try {
       const defaultProfile: Partial<UserProfile> = {
         auth_id: authUser.id,
@@ -242,14 +280,19 @@ export class AuthService {
 
       await setDoc(doc(db, 'user_profiles', authUser.id), defaultProfile);
       console.log('Kullanıcı profili oluşturuldu:', authUser.id);
+      return { error: null };
     } catch (error) {
       console.error('Create user profile error:', error);
-      throw error;
+      return { error: 'Kullanıcı profili oluşturulamadı' };
     }
   }
 
   // Kullanıcı profilini al
   async getUserProfile(authId: string): Promise<UserProfile | null> {
+    if (!db) {
+      console.error('Firestore service is not initialized.');
+      return null;
+    }
     try {
       const docRef = doc(db, 'user_profiles', authId);
       const docSnap = await getDoc(docRef);
@@ -267,6 +310,10 @@ export class AuthService {
 
   // Kullanıcı profilini güncelle
   async updateUserProfile(authId: string, updates: Partial<UserProfile>): Promise<{ error: string | null }> {
+    if (!db) {
+      console.error('Firestore service is not initialized.');
+      return { error: 'Firestore service is not initialized.' };
+    }
     try {
       const docRef = doc(db, 'user_profiles', authId);
       await updateDoc(docRef, {
@@ -283,6 +330,10 @@ export class AuthService {
 
   // Auth state değişikliklerini dinle
   onAuthStateChange(callback: (user: AuthUser | null) => void) {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized. onAuthStateChanged will not be active.');
+      return () => {}; // Return a no-op unsubscribe function
+    }
     return onAuthStateChanged(auth, (firebaseUser) => {
       if (firebaseUser) {
         const authUser = this.firebaseUserToAuthUser(firebaseUser);
@@ -295,11 +346,19 @@ export class AuthService {
 
   // E-posta doğrulama durumunu kontrol et
   checkEmailVerification(): boolean {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return false;
+    }
     return auth.currentUser?.emailVerified || false;
   }
 
   // E-posta doğrulama e-postası gönder
   async resendEmailVerification(): Promise<{ error: string | null }> {
+    if (!auth) {
+      console.error('Firebase Auth service is not initialized.');
+      return { error: 'Firebase Auth service is not initialized.' };
+    }
     try {
       if (!auth.currentUser) {
         return { error: 'Kullanıcı oturumu bulunamadı' };
