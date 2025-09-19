@@ -233,7 +233,6 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
 
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
-    // setInputMessage(''); // MessageInput artık kendi state'ini yönetiyor
     setIsLoading(true);
 
     try {
@@ -303,6 +302,11 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
     } finally {
       setIsLoading(false);
     }
+  };
+
+  const handleSuggestionClick = (suggestion: string) => {
+    setShowSuggestions(false);
+    handleSendMessage(suggestion);
   };
 
   if (!chat) {
