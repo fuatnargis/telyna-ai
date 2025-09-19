@@ -1,5 +1,5 @@
 import React, { useState, useEffect } from 'react';
-// import { useAuth } from './hooks/useAuth';
+import { useAuth } from './hooks/useAuth'; // Firebase kimlik doğrulama hook'unu etkinleştiriyoruz
 import OnboardingPage from './components/pages/OnboardingPage';
 import AuthPage from './components/pages/AuthPage';
 import ProfileSetupPage from './components/pages/ProfileSetupPage';
@@ -43,53 +43,53 @@ function App() {
   const [pendingChat, setPendingChat] = useState<{ country: string; purpose: Purpose } | null>(null);
   
   // Firebase authentication
-  // const { user: authUser, profile, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile } = useAuth();
+  const { user: authUser, profile, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword, updatePassword } = useAuth();
   
-  // Temporary mock authentication for demo
-  const [authUser, setAuthUser] = useState<any>(null);
-  const [profile, setProfile] = useState<any>(null);
-  const [loading, setLoading] = useState(false);
+  // Temporary mock authentication for demo - KALDIRILDI
+  // const [authUser, setAuthUser] = useState<any>(null);
+  // const [profile, setProfile] = useState<any>(null);
+  // const [loading, setLoading] = useState(false);
   
-  const signUp = async (email: string, password: string, name: string) => {
-    setLoading(true);
-    setTimeout(() => {
-      const mockUser = { id: '1', email, name };
-      setAuthUser(mockUser);
-      setLoading(false);
-    }, 1000);
-    return { error: null };
-  };
+  // const signUp = async (email: string, password: string, name: string) => {
+  //   setLoading(true);
+  //   setTimeout(() => {
+  //     const mockUser = { id: '1', email, name };
+  //     setAuthUser(mockUser);
+  //     setLoading(false);
+  //   }, 1000);
+  //   return { error: null };
+  // };
   
-  const signIn = async (email: string, password: string) => {
-    setLoading(true);
-    setTimeout(() => {
-      const mockUser = { id: '1', email, name: 'Demo User' };
-      setAuthUser(mockUser);
-      setLoading(false);
-    }, 1000);
-    return { error: null };
-  };
+  // const signIn = async (email: string, password: string) => {
+  //   setLoading(true);
+  //   setTimeout(() => {
+  //     const mockUser = { id: '1', email, name: 'Demo User' };
+  //     setAuthUser(mockUser);
+  //     setLoading(false);
+  //   }, 1000);
+  //   return { error: null };
+  // };
   
-  const signInWithGoogle = async () => {
-    setLoading(true);
-    setTimeout(() => {
-      const mockUser = { id: '1', email: 'demo@gmail.com', name: 'Google User' };
-      setAuthUser(mockUser);
-      setLoading(false);
-    }, 1000);
-    return { error: null };
-  };
+  // const signInWithGoogle = async () => {
+  //   setLoading(true);
+  //   setTimeout(() => {
+  //     const mockUser = { id: '1', email: 'demo@gmail.com', name: 'Google User' };
+  //     setAuthUser(mockUser);
+  //     setLoading(false);
+  //   }, 1000);
+  //   return { error: null };
+  // };
   
-  const signOut = async () => {
-    setAuthUser(null);
-    setProfile(null);
-    return { error: null };
-  };
+  // const signOut = async () => {
+  //   setAuthUser(null);
+  //   setProfile(null);
+  //   return { error: null };
+  // };
   
-  const updateProfile = async (updates: any) => {
-    setProfile(prev => ({ ...prev, ...updates }));
-    return { error: null };
-  };
+  // const updateProfile = async (updates: any) => {
+  //   setProfile(prev => ({ ...prev, ...updates }));
+  //   return { error: null };
+  // };
 
   // Check authentication status on app load
   useEffect(() => {
@@ -287,14 +287,16 @@ function App() {
           signIn={signIn}
           signInWithGoogle={signInWithGoogle}
           onAuthSuccess={handleAuthSuccess}
+          onForgotPassword={() => setAppState('reset-password')} // Şifre sıfırlama sayfasına yönlendirme
         />
       );
 
     case 'reset-password':
       return (
         <ResetPasswordPage
-          onResetPassword={handleResetPassword}
+          onResetPassword={resetPassword} // useAuth'tan gelen resetPassword fonksiyonunu kullan
           onBack={handleBackToAuth}
+          updatePassword={updatePassword} // useAuth'tan gelen updatePassword fonksiyonunu kullan
         />
       );
 

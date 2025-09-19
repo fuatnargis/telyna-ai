@@ -7,12 +7,13 @@ interface AuthPageProps {
   signIn: UseAuthReturn['signIn'];
   signInWithGoogle: UseAuthReturn['signInWithGoogle'];
   onAuthSuccess: () => void;
+  onForgotPassword: () => void; // Yeni eklendi
 }
 
-export default function AuthPage({ signUp, signIn, signInWithGoogle, onAuthSuccess }: AuthPageProps) {
+export default function AuthPage({ signUp, signIn, signInWithGoogle, onAuthSuccess, onForgotPassword }: AuthPageProps) {
   const [isLogin, setIsLogin] = useState(true);
   const [showPassword, setShowPassword] = useState(false);
-  const [showForgotPassword, setShowForgotPassword] = useState(false);
+  // const [showForgotPassword, setShowForgotPassword] = useState(false); // Artık App.tsx tarafından yönetiliyor
   const [formData, setFormData] = useState({
     name: '',
     email: '',
@@ -79,20 +80,21 @@ export default function AuthPage({ signUp, signIn, signInWithGoogle, onAuthSucce
     }
   };
 
-  const handleForgotPasswordSubmit = (e: React.FormEvent) => {
-    e.preventDefault();
-    if (!formData.email) {
-      setErrors({ email: 'E-posta gerekli' });
-      return;
-    }
+  // Şifre sıfırlama formu artık AuthPage içinde değil, App.tsx tarafından yönetilen ResetPasswordPage'de
+  // const handleForgotPasswordSubmit = (e: React.FormEvent) => {
+  //   e.preventDefault();
+  //   if (!formData.email) {
+  //     setErrors({ email: 'E-posta gerekli' });
+  //     return;
+  //   }
     
-    setIsSubmitting(true);
-    // Geçici olarak başarılı reset simülasyonu
-    setTimeout(() => {
-      setIsSubmitting(false);
-      setSuccessMessage('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.');
-    }, 1000);
-  };
+  //   setIsSubmitting(true);
+  //   // Geçici olarak başarılı reset simülasyonu
+  //   setTimeout(() => {
+  //     setIsSubmitting(false);
+  //     setSuccessMessage('Şifre sıfırlama bağlantısı e-posta adresinize gönderildi.');
+  //   }, 1000);
+  // };
 
   const handleGoogleSignIn = async () => {
     setIsSubmitting(true);
@@ -123,59 +125,60 @@ export default function AuthPage({ signUp, signIn, signInWithGoogle, onAuthSucce
     }
   };
 
-  if (showForgotPassword) {
-    return (
-      <div className="relative flex min-h-screen flex-col bg-slate-900 dark justify-between">
-        <div className="flex-grow">
-          <header className="flex items-center p-4">
-            <button 
-              onClick={() => setShowForgotPassword(false)}
-              className="text-white"
-            >
-              <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 256 256">
-                <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
-              </svg>
-            </button>
-            <h1 className="text-white text-xl font-bold flex-1 text-center pr-8">Forgot Your Password?</h1>
-          </header>
-          <main className="px-6 py-8 text-center">
-            <p className="text-slate-400 mb-8">
-              No worries! Enter the email address you used to register and we'll send you a link to reset your password.
-            </p>
+  // Şifre sıfırlama sayfası artık ayrı bir bileşen
+  // if (showForgotPassword) {
+  //   return (
+  //     <div className="relative flex min-h-screen flex-col bg-slate-900 dark justify-between">
+  //       <div className="flex-grow">
+  //         <header className="flex items-center p-4">
+  //           <button 
+  //             onClick={() => setShowForgotPassword(false)}
+  //             className="text-white"
+  //           >
+  //             <svg className="w-6 h-6" fill="currentColor" viewBox="0 0 256 256">
+  //               <path d="M224,128a8,8,0,0,1-8,8H59.31l58.35,58.34a8,8,0,0,1-11.32,11.32l-72-72a8,8,0,0,1,0-11.32l72-72a8,8,0,0,1,11.32,11.32L59.31,120H216A8,8,0,0,1,224,128Z"></path>
+  //             </svg>
+  //           </button>
+  //           <h1 className="text-white text-xl font-bold flex-1 text-center pr-8">Forgot Your Password?</h1>
+  //         </header>
+  //         <main className="px-6 py-8 text-center">
+  //           <p className="text-slate-400 mb-8">
+  //             No worries! Enter the email address you used to register and we'll send you a link to reset your password.
+  //           </p>
             
-            {successMessage && (
-              <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-xl flex items-center gap-3">
-                <CheckCircle className="w-5 h-5 text-green-400" />
-                <p className="text-green-200 text-sm">{successMessage}</p>
-              </div>
-            )}
+  //           {successMessage && (
+  //             <div className="mb-6 p-4 bg-green-500/20 border border-green-500/50 rounded-xl flex items-center gap-3">
+  //               <CheckCircle className="w-5 h-5 text-green-400" />
+  //               <p className="text-green-200 text-sm">{successMessage}</p>
+  //             </div>
+  //           )}
             
-            <form onSubmit={handleForgotPasswordSubmit}>
-              <div className="relative">
-                <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
-                <input
-                  type="email"
-                  value={formData.email}
-                  onChange={(e) => handleInputChange('email', e.target.value)}
-                  className="w-full resize-none overflow-hidden rounded-xl text-white bg-slate-800 border border-slate-700 focus:ring-2 focus:ring-blue-500 h-14 placeholder:text-slate-400 pl-12 pr-4 text-base"
-                  placeholder="Email Address"
-                  required
-                />
-              </div>
-              {errors.email && <p className="text-red-400 text-sm mt-2">{errors.email}</p>}
-              <button
-                type="submit"
-                disabled={isSubmitting}
-                className="w-full mt-8 cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-blue-500 text-white text-lg font-bold hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
-              >
-                {isSubmitting ? 'Gönderiliyor...' : 'Şifre Sıfırlama Bağlantısı Gönder'}
-              </button>
-            </form>
-          </main>
-        </div>
-      </div>
-    );
-  }
+  //           <form onSubmit={handleForgotPasswordSubmit}>
+  //             <div className="relative">
+  //               <Mail className="absolute left-4 top-1/2 -translate-y-1/2 text-slate-400 w-5 h-5" />
+  //               <input
+  //                 type="email"
+  //                 value={formData.email}
+  //                 onChange={(e) => handleInputChange('email', e.target.value)}
+  //                 className="w-full resize-none overflow-hidden rounded-xl text-white bg-slate-800 border border-slate-700 focus:ring-2 focus:ring-blue-500 h-14 placeholder:text-slate-400 pl-12 pr-4 text-base"
+  //                 placeholder="Email Address"
+  //                 required
+  //               />
+  //             </div>
+  //             {errors.email && <p className="text-red-400 text-sm mt-2">{errors.email}</p>}
+  //             <button
+  //               type="submit"
+  //               disabled={isSubmitting}
+  //               className="w-full mt-8 cursor-pointer items-center justify-center overflow-hidden rounded-xl h-14 px-5 bg-blue-500 text-white text-lg font-bold hover:bg-blue-600 transition-colors disabled:opacity-50 disabled:cursor-not-allowed"
+  //             >
+  //               {isSubmitting ? 'Gönderiliyor...' : 'Şifre Sıfırlama Bağlantısı Gönder'}
+  //             </button>
+  //           </form>
+  //         </main>
+  //       </div>
+  //     </div>
+  //   );
+  // }
 
   return (
     <div className="relative flex min-h-screen flex-col bg-slate-900 justify-center items-center">
@@ -275,7 +278,7 @@ export default function AuthPage({ signUp, signIn, signInWithGoogle, onAuthSucce
             <div className="text-right">
               <button
                 type="button"
-                onClick={() => setShowForgotPassword(true)}
+                onClick={onForgotPassword} // App.tsx'ten gelen prop'u kullan
                 className="text-sm text-blue-400 hover:text-blue-300 hover:underline"
               >
                 Şifremi Unuttum?
