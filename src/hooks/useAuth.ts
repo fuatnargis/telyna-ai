@@ -96,7 +96,7 @@ export function useAuth(): UseAuthReturn {
       const result = await authService.signUpWithEmail(email, password, name);
       return { error: result.error };
     } finally {
-      // onAuthStateChange will handle setLoading(false)
+      setLoading(false); // Auth işlemi bittiğinde loading'i false yap
     }
   };
 
@@ -106,7 +106,7 @@ export function useAuth(): UseAuthReturn {
       const result = await authService.signInWithEmail(email, password);
       return { error: result.error };
     } finally {
-      // onAuthStateChange will handle setLoading(false)
+      setLoading(false); // Auth işlemi bittiğinde loading'i false yap
     }
   };
 
@@ -116,7 +116,7 @@ export function useAuth(): UseAuthReturn {
       const result = await authService.signInWithGoogle();
       return { error: result.error };
     } finally {
-      // onAuthStateChange will handle setLoading(false)
+      setLoading(false); // Auth işlemi bittiğinde loading'i false yap
     }
   };
 
@@ -147,7 +147,7 @@ export function useAuth(): UseAuthReturn {
       const result = await authService.updatePassword(newPassword);
       return { error: result.error };
     } finally {
-      // onAuthStateChange will handle setLoading(false)
+      setLoading(false); // Şifre güncelleme işlemi bittiğinde loading'i false yap
     }
   };
 
