@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useRef } from 'react';
 import { authService, type AuthUser, type UserProfile } from '../services/authService';
 
 export interface UseAuthReturn {
@@ -19,64 +19,84 @@ export interface UseAuthReturn {
 export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true);
+  const [loading, setLoading] = useState(true); // Starts true for initial app load
   const [isEmailVerified, setIsEmailVerified] = useState(false);
+  const isInitialAuthCheckComplete = useRef(false); // To ensure initial loading is handled once
 
   useEffect(() => {
-    const unsubscribe = authService.onAuthStateChange(async (authUser) => {
-      setLoading(true); // Auth state değiştiğinde veya ilk yüklendiğinde yükleniyor olarak işaretle
-      setUser(authUser);
-      
-      if (authUser) {
-        const userProfile = await authService.getUserProfile(authUser.id);
-        setProfile(userProfile);
-        const emailVerified = authService.checkEmailVerification();
-        setIsEmailVerified(emailVerified);
-      } else {
-        setProfile(null);
-        setIsEmailVerified(false);
+    const unsubscribe = authService.onAuthStateChange(async (authUserFromService) => {
+      // For the very first auth state check, we don't set loading to true again
+      // as it's already true from useState(true).
+      // For subsequent auth state changes (e.g., after login/logout actions),
+      // we set loading to true to indicate processing.
+      if (isInitialAuthCheckComplete.current) {
+        setLoading(true); 
       }
       
-      setLoading(false); // Tüm veriler yüklendikten sonra loading'i false yap
+      setUser(authUserFromService);
+      
+      try { 
+        if (authUserFromService) {
+          const userProfile = await authService.getUserProfile(authUserFromService.id);
+          setProfile(userProfile);
+          const emailVerified = authService.checkEmailVerification();
+          setIsEmailVerified(emailVerified);
+        } else {
+          setProfile(null);
+          setIsEmailVerified(false);
+        }
+      } catch (error) {
+        console.error('Error fetching user profile in onAuthStateChange:', error);
+        setProfile(null); 
+        setIsEmailVerified(false);
+      } finally {
+        setLoading(false); 
+        isInitialAuthCheckComplete.current = true; // Mark initial check as complete
+      }
     });
 
     return () => {
       unsubscribe();
     };
-  }, []); // İlk render'da ve sadece bir kez çalışır
+  }, []);
+
+  // Helper to set loading state for auth actions
+  const setAuthActionLoading = () => {
+    setLoading(true);
+  };
 
   const signUp = async (email: string, password: string, name: string) => {
-    setLoading(true);
+    setAuthActionLoading(); // Set loading true for this action
     try {
       const result = await authService.signUpWithEmail(email, password, name);
       return { error: result.error };
     } finally {
-      // setLoading(false); // onAuthStateChange tarafından yönetilecek
+      // onAuthStateChange will handle setLoading(false) after the auth state updates
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    setLoading(true);
+    setAuthActionLoading(); // Set loading true for this action
     try {
       const result = await authService.signInWithEmail(email, password);
       return { error: result.error };
     } finally {
-      // setLoading(false); // onAuthStateChange tarafından yönetilecek
+      // onAuthStateChange will handle setLoading(false)
     }
   };
 
   const signInWithGoogle = async () => {
-    setLoading(true);
+    setAuthActionLoading(); // Set loading true for this action
     try {
       const result = await authService.signInWithGoogle();
       return { error: result.error };
     } finally {
-      // setLoading(false); // onAuthStateChange tarafından yönetilecek
+      // onAuthStateChange will handle setLoading(false)
     }
   };
 
   const signOut = async () => {
-    setLoading(true);
+    setAuthActionLoading(); // Set loading true for this action
     try {
       const result = await authService.signOut();
       if (!result.error) {
@@ -86,33 +106,47 @@ export function useAuth(): UseAuthReturn {
       }
       return result;
     } finally {
-      // setLoading(false); // onAuthStateChange tarafından yönetilecek
+      // onAuthStateChange will handle setLoading(false)
     }
   };
 
   const resetPassword = async (email: string) => {
+    // No need to set loading here, as it's a non-auth state changing action
     return await authService.resetPassword(email);
   };
 
   const updatePassword = async (newPassword: string) => {
-    return await authService.updatePassword(newPassword);
+    // This changes auth.currentUser, so onAuthStateChange will fire,
+    // but we might want to show loading explicitly for this action too.
+    setAuthActionLoading();
+    try {
+      const result = await authService.updatePassword(newPassword);
+      return { error: result.error };
+    } finally {
+      // onAuthStateChange will handle setLoading(false)
+    }
   };
 
   const updateProfile = async (updates: Partial<UserProfile>) => {
     if (!user) {
       return { error: 'Kullanıcı oturumu bulunamadı' };
     }
-
-    const result = await authService.updateUserProfile(user.id, updates);
-    
-    if (!result.error && profile) {
-      setProfile({ ...profile, ...updates });
+    setAuthActionLoading(); // Profile update is also an async action
+    try {
+      const result = await authService.updateUserProfile(user.id, updates);
+      
+      if (!result.error && profile) {
+        setProfile({ ...profile, ...updates });
+      }
+      
+      return result;
+    } finally {
+      // onAuthStateChange will handle setLoading(false)
     }
-    
-    return result;
   };
 
   const resendEmailVerification = async () => {
+    // No need to set loading here
     return await authService.resendEmailVerification();
   };
 
