@@ -155,17 +155,18 @@ export function useAuth(): UseAuthReturn {
     if (!user) {
       return { error: 'Kullanıcı oturumu bulunamadı' };
     }
-    setAuthActionLoading();
+    setAuthActionLoading(); // Sets loading to true
     try {
       const result = await authService.updateUserProfile(user.id, updates);
       
       if (!result.error && profile) {
-        setProfile({ ...profile, ...updates });
+        setProfile({ ...profile, ...updates }); // Updates local profile state
       }
       
       return result;
     } finally {
-      // onAuthStateChange will handle setLoading(false)
+      setLoading(false); // Explicitly set loading to false after profile update attempt
+      console.log('useAuth: updateProfile finished. Setting loading to false.');
     }
   };
 
