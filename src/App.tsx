@@ -46,64 +46,51 @@ function App() {
   
   // Check authentication status on app load
   useEffect(() => {
-    console.log('App.tsx useEffect: State Check Initiated');
-    console.log('  Current appState:', appState);
-    console.log('  loading (from useAuth):', loading);
-    console.log('  authUser (from useAuth):', authUser ? authUser.id : 'null');
-    console.log('  profile (from useAuth):', profile ? 'present' : 'null');
-    console.log('  hasSeenOnboarding (from localStorage):', hasSeenOnboarding);
-
     // İlk olarak onboarding durumunu kontrol et
     if (!hasSeenOnboarding) {
-      console.log('App.tsx: hasSeenOnboarding is false. Setting appState to onboarding.');
       setAppState('onboarding');
       return;
     }
 
     // Kimlik doğrulama veya profil verileri yükleniyorsa 'optimizing' ekranını göster
     if (loading) {
-      console.log('App.tsx: loading is true. Setting appState to optimizing.');
       setAppState('optimizing');
       return;
     }
 
     // Yükleme tamamlandıktan sonra kullanıcı durumuna göre yönlendirme yap
     if (authUser) {
-      console.log('App.tsx: AuthUser is present.');
+      // authUser mevcut ama profil henüz yüklenmediyse veya null ise optimizing'de kal
+      // useAuth'taki loading durumu, profilin yüklenmesini de kapsadığı için bu kontrol yeterli.
+      // Eğer loading false ise ve authUser var ama profile null ise, profilin oluşturulması gerekiyor.
       if (!profile) {
-        console.log('App.tsx: Profile is null. Setting appState to profile-setup.');
         setAppState('profile-setup');
       } else if (!profile.isProfileComplete) {
-        console.log('App.tsx: Profile is present but incomplete. Setting appState to profile-setup.');
         setAppState('profile-setup');
       } else {
-        console.log('App.tsx: AuthUser and complete profile present. Setting appState to home.');
         setAppState('home');
       }
     } else {
-      console.log('App.tsx: No AuthUser. Setting appState to auth.');
       setAppState('auth');
     }
   }, [authUser, profile, loading, hasSeenOnboarding]);
 
   const handleOnboardingComplete = () => {
     setHasSeenOnboarding(true);
-    console.log('App.tsx: Onboarding completed. hasSeenOnboarding set to true.');
-    // useEffect, hasSeenOnboarding değiştiği için yeniden çalışacak ve yönlendirmeyi yapacaktır.
+    // Onboarding tamamlandıktan sonra, useEffect authUser ve profile durumuna göre yönlendirecektir.
   };
   
   const handleAuthSuccess = async () => {
-    console.log('App.tsx: Auth successful. useEffect will handle redirection.');
-    // useEffect, authUser değiştiği için yeniden çalışacak ve yönlendirmeyi yapacaktır.
+    // Kimlik doğrulama başarılı olduğunda, useEffect authUser ve profile durumuna göre yönlendirecektir.
+    // Bu fonksiyonun içi boş kalabilir, çünkü useEffect zaten durumu izliyor.
   };
 
   const handleResetPassword = (newPassword: string, confirmPassword: string) => {
-    console.log('App.tsx: Reset password flow initiated. Redirecting to auth.');
+    // Şifre sıfırlama ResetPasswordPage'de ele alınır
     setAppState('auth');
   };
 
   const handleProfileSetupComplete = async (profileData: any) => {
-    console.log('App.tsx: Profile setup completed. Attempting to update profile.');
     if (authUser) {
       const result = await updateProfile({
         ...profileData,
@@ -111,25 +98,19 @@ function App() {
       });
       
       if (!result.error) {
-        console.log('App.tsx: Profile updated successfully. Redirecting to premium-ad.');
         setAppState('premium-ad');
       } else {
         alert('Profil güncellenirken hata oluştu: ' + result.error);
-        console.error('App.tsx: Error updating profile after setup:', result.error);
       }
-    } else {
-      console.error('App.tsx: No authUser found during profile setup completion.');
     }
   };
 
   const handleStartChat = (country: string, purpose: Purpose) => {
-    console.log('App.tsx: Starting new chat. Setting pendingChat and appState to optimizing.');
     setPendingChat({ country, purpose });
     setAppState('optimizing');
   };
 
   const handleOptimizationComplete = () => {
-    console.log('App.tsx: Optimization completed.');
     if (pendingChat) {
       const newChat: Chat = {
         id: Date.now().toString(),
@@ -144,105 +125,81 @@ function App() {
       setCurrentChat(newChat);
       setPendingChat(null);
       setAppState('chat');
-      console.log('App.tsx: Redirecting to chat page with new chat.');
-    } else {
-      console.error('App.tsx: Optimization completed but no pending chat found.');
     }
   };
 
   const handleOpenChat = (chat: Chat) => {
-    console.log('App.tsx: Opening existing chat:', chat.id);
     setCurrentChat(chat);
     setAppState('chat');
   };
 
   const handleBackToHome = () => {
-    console.log('App.tsx: Navigating back to home.');
     setCurrentChat(null);
     setAppState('home');
   };
 
   const handleUpdateChat = (updatedChat: Chat) => {
     setCurrentChat(updatedChat);
-    console.log('App.tsx: Chat updated:', updatedChat.id);
   };
 
   const handleOpenProfile = () => {
-    console.log('App.tsx: Opening profile page.');
     setAppState('profile');
   };
 
   const handleEditProfile = () => {
-    console.log('App.tsx: Opening edit profile page.');
     setAppState('edit-profile');
   };
 
   const handlePrivacySettings = () => {
-    console.log('App.tsx: Opening privacy settings page.');
     setAppState('privacy-settings');
   };
 
   const handleNotificationSettings = () => {
-    console.log('App.tsx: Opening notification settings page.');
     setAppState('notification-settings');
   };
 
   const handleHelpSupport = () => {
-    console.log('App.tsx: Opening help & support page.');
     setAppState('help-support');
   };
 
   const handleLanguageSettings = () => {
-    console.log('App.tsx: Opening language settings page.');
     setAppState('language-settings');
   };
 
   const handleAbout = () => {
-    console.log('App.tsx: Opening about page.');
     setAppState('about');
   };
 
   const handleUpdateProfile = async (updatedData: any) => {
-    console.log('App.tsx: Attempting to update profile from edit page.');
     if (authUser) {
       const result = await updateProfile(updatedData);
       if (!result.error) {
-        console.log('App.tsx: Profile updated successfully from edit page. Redirecting to profile.');
         setAppState('profile');
       } else {
         alert('Profil güncellenirken hata oluştu: ' + result.error);
-        console.error('App.tsx: Error updating profile from edit page:', result.error);
       }
-    } else {
-      console.error('App.tsx: No authUser found during profile update from edit page.');
     }
   };
 
   const handleLogout = async () => {
-    console.log('App.tsx: Logging out.');
     await signOut();
     setCurrentChat(null);
     setPendingChat(null);
-    // useEffect, authUser değiştiği için yeniden çalışacak ve auth sayfasına yönlendirecektir.
   };
 
   const handleBackToProfile = () => {
-    console.log('App.tsx: Navigating back to profile.');
     setAppState('profile');
   };
 
   const handleBackToAuth = () => {
-    console.log('App.tsx: Navigating back to auth.');
     setAppState('auth');
   };
 
   const handlePremiumAdContinue = () => {
-    console.log('App.tsx: Continuing from premium ad.');
     setAppState('home');
   };
 
   const handlePremiumAdSkip = () => {
-    console.log('App.tsx: Skipping premium ad.');
     setAppState('home');
   };
 
@@ -289,8 +246,8 @@ function App() {
           <div className="w-8 h-8 animate-spin rounded-full border-2 border-slate-500 border-t-blue-500" />
           <span className="text-lg">Verileriniz yükleniyor...</span>
         </div>
-      </div>
-    );
+      );
+    }
   }
 
   // Render based on current state

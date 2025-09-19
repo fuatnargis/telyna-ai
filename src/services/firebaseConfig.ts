@@ -14,9 +14,10 @@ const firebaseConfig = {
 // Firebase yapılandırmasını kontrol et
 if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
   console.error('Firebase yapılandırması eksik! Lütfen .env dosyanızı kontrol edin.');
-  console.log('Firebase Config:', firebaseConfig);
+  // Bu durumda uygulamayı başlatmamak veya bir hata ekranı göstermek daha iyi olabilir.
+  // Şimdilik sadece logluyoruz.
 } else {
-  console.log('Firebase yapılandırması başarılı.');
+  // console.log('Firebase yapılandırması başarılı.'); // Hata ayıklama günlüğünü kaldır
 }
 
 // Firebase'i başlat
