@@ -1,4 +1,3 @@
-import React from 'react';
 import { ArrowLeft, Globe, Users, Shield, Zap, Heart, Star, Award, Target, Lightbulb } from 'lucide-react';
 
 interface AboutPageProps {

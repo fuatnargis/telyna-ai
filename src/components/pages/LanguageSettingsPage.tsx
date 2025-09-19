@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Globe, Check, Mic, Volume2, Download } from 'lucide-react';
 
 interface LanguageSettingsPageProps {

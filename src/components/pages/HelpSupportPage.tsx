@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Search, MessageCircle, Book, Settings, Info, Mail, Phone, Globe, FileText, Star, Zap } from 'lucide-react';
 
 interface HelpSupportPageProps {

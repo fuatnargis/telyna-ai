@@ -1,4 +1,3 @@
-import React from 'react';
 import { ChevronRight, Globe, Info } from 'lucide-react';
 import type { User } from '../../types';
 
@@ -195,57 +194,49 @@ export default function ProfilePage({
             onClick={onLanguageSettings}
             className="w-full p-6 text-left hover:bg-white/10 transition-colors border-b border-white/10 group"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-indigo-500 to-purple-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Globe className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors">Language Settings</h3>
-                  <p className="text-blue-200/80 text-sm">Choose your preferred language</p>
-                </div>
+            <div className="flex items-center gap-4">
+                <Globe className="w-6 h-6 text-white" />
               </div>
-              <ChevronRight className="w-5 h-5 text-white/60 group-hover:translate-x-1 transition-transform" />
+              <div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors">Language Settings</h3>
+                <p className="text-blue-200/80 text-sm">Choose your preferred language</p>
+              </div>
             </div>
+            <ChevronRight className="w-5 h-5 text-white/60 group-hover:translate-x-1 transition-transform" />
           </button>
           
           <button 
             onClick={onHelpSupport}
             className="w-full p-6 text-left hover:bg-white/10 transition-colors group"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
-                    <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
-                  </svg>
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors">Help & Support</h3>
-                  <p className="text-blue-200/80 text-sm">Get help and support</p>
-                </div>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-yellow-500 to-orange-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <svg className="w-6 h-6 text-white" fill="currentColor" viewBox="0 0 20 20">
+                  <path fillRule="evenodd" d="M18 10a8 8 0 11-16 0 8 8 0 0116 0zm-8-3a1 1 0 00-.867.5 1 1 0 11-1.731-1A3 3 0 0113 8a3.001 3.001 0 01-2 2.83V11a1 1 0 11-2 0v-1a1 1 0 011-1 1 1 0 100-2zm0 8a1 1 0 100-2 1 1 0 000 2z" clipRule="evenodd" />
+                </svg>
               </div>
-              <ChevronRight className="w-5 h-5 text-white/60 group-hover:translate-x-1 transition-transform" />
+              <div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors">Help & Support</h3>
+                <p className="text-blue-200/80 text-sm">Get help and support</p>
+              </div>
             </div>
+            <ChevronRight className="w-5 h-5 text-white/60 group-hover:translate-x-1 transition-transform" />
           </button>
           
           <button 
             onClick={onAbout}
             className="w-full p-6 text-left hover:bg-white/10 transition-colors border-t border-white/10 group"
           >
-            <div className="flex items-center justify-between">
-              <div className="flex items-center gap-4">
-                <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
-                  <Info className="w-6 h-6 text-white" />
-                </div>
-                <div>
-                  <h3 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors">About CultureWise AI</h3>
-                  <h3 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors">About Telyna AI</h3>
-                  <p className="text-blue-200/80 text-sm">App information and version</p>
-                </div>
+            <div className="flex items-center gap-4">
+              <div className="w-12 h-12 bg-gradient-to-r from-cyan-500 to-blue-500 rounded-2xl flex items-center justify-center shadow-lg group-hover:scale-110 transition-transform">
+                <Info className="w-6 h-6 text-white" />
               </div>
-              <ChevronRight className="w-5 h-5 text-white/60 group-hover:translate-x-1 transition-transform" />
+              <div>
+                <h3 className="text-lg font-semibold text-white group-hover:text-blue-200 transition-colors">About Telyna AI</h3>
+                  <p className="text-blue-200/80 text-sm">App information and version</p>
+              </div>
             </div>
+            <ChevronRight className="w-5 h-5 text-white/60 group-hover:translate-x-1 transition-transform" />
           </button>
         </div>
       </main>

@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { Globe, MessageCircle, Users, Lightbulb, ArrowRight, Check, Sparkles, Star, Zap, Shield, Brain, Heart } from 'lucide-react';
+import { useState } from 'react';
+import { Globe, Users, Lightbulb, ArrowRight, Check, Sparkles, Star, Zap, Shield, Brain, Heart } from 'lucide-react';
 
 interface OnboardingPageProps {
   onComplete: () => void;

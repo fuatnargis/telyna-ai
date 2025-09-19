@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { Crown, Star, Globe, Zap, Shield, Users, ArrowRight, Sparkles, Check } from 'lucide-react';
 
 interface PremiumAdPageProps {

@@ -1,4 +1,4 @@
-import React, { useState, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { useAuth } from './hooks/useAuth';
 import OnboardingPage from './components/pages/OnboardingPage';
 import AuthPage from './components/pages/AuthPage';
@@ -38,7 +38,7 @@ type AppState =
 function App() {
   const [appState, setAppState] = useState<AppState>('onboarding');
   const [hasSeenOnboarding, setHasSeenOnboarding] = useLocalStorage<boolean>('hasSeenOnboarding', false);
-  const [pastChats, setPastChats] = useLocalStorage<Chat[]>('pastChats', []);
+  const [, setPastChats] = useLocalStorage<Chat[]>('pastChats', []); // pastChats kullanılmadığı için destructure edildi
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [pendingChat, setPendingChat] = useState<{ country: string; purpose: Purpose } | null>(null);
   
@@ -85,10 +85,11 @@ function App() {
     // Bu fonksiyonun içi boş kalabilir, çünkü useEffect zaten durumu izliyor.
   };
 
-  const handleResetPassword = (newPassword: string, confirmPassword: string) => {
-    // Şifre sıfırlama ResetPasswordPage'de ele alınır
-    setAppState('auth');
-  };
+  // handleResetPassword fonksiyonu kullanılmadığı için kaldırıldı.
+  // const handleResetPassword = (newPassword: string, confirmPassword: string) => {
+  //   // Şifre sıfırlama ResetPasswordPage'de ele alınır
+  //   setAppState('auth');
+  // };
 
   const handleProfileSetupComplete = async (profileData: any) => {
     if (authUser) {

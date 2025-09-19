@@ -20,7 +20,7 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
   const [showPlusMenu, setShowPlusMenu] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
   const [showSuggestions, setShowSuggestions] = useState(false);
-  const [pastChats, setPastChats] = useLocalStorage<Chat[]>('pastChats', []);
+  const [, setPastChats] = useLocalStorage<Chat[]>('pastChats', []); // pastChats kullanılmadığı için destructure edildi
   const [isInitialized, setIsInitialized] = useState(false);
   const messagesEndRef = useRef<HTMLDivElement>(null);
   const fileInputRef = useRef<HTMLInputElement>(null);

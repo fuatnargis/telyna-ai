@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, Bell, MessageCircle, Globe, Zap, Volume2, Vibrate, Clock, Star } from 'lucide-react';
 
 interface NotificationSettingsPageProps {
@@ -183,45 +183,41 @@ export default function NotificationSettingsPage({ onBack }: NotificationSetting
             </div>
 
             <div className="p-6 border-b border-white/10">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Globe className="w-6 h-6 text-purple-400" />
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-white mb-1">Cultural Updates</h3>
-                    <p className="text-blue-200/80 text-sm">Updates about cultural events and holidays</p>
-                  </div>
+              <div className="flex items-center gap-4">
+                <Globe className="w-6 h-6 text-purple-400" />
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white mb-1">Cultural Updates</h3>
+                  <p className="text-blue-200/80 text-sm">Updates about cultural events and holidays</p>
                 </div>
-                <label className="relative flex h-8 w-14 cursor-pointer items-center rounded-full bg-white/20 transition-colors has-[:checked]:bg-gradient-to-r has-[:checked]:from-blue-500 has-[:checked]:to-purple-500">
-                  <span className={`h-6 w-6 rounded-full bg-white shadow-lg transition-transform ${settings.culturalUpdates ? 'translate-x-7' : 'translate-x-1'}`}></span>
-                  <input
-                    type="checkbox"
-                    checked={settings.culturalUpdates}
-                    onChange={() => handleToggle('culturalUpdates')}
-                    className="sr-only"
-                  />
-                </label>
               </div>
+              <label className="relative flex h-8 w-14 cursor-pointer items-center rounded-full bg-white/20 transition-colors has-[:checked]:bg-gradient-to-r has-[:checked]:from-blue-500 has-[:checked]:to-purple-500">
+                <span className={`h-6 w-6 rounded-full bg-white shadow-lg transition-transform ${settings.culturalUpdates ? 'translate-x-7' : 'translate-x-1'}`}></span>
+                <input
+                  type="checkbox"
+                  checked={settings.culturalUpdates}
+                  onChange={() => handleToggle('culturalUpdates')}
+                  className="sr-only"
+                />
+              </label>
             </div>
 
             <div className="p-6">
-              <div className="flex items-center justify-between">
-                <div className="flex items-center gap-4">
-                  <Clock className="w-6 h-6 text-orange-400" />
-                  <div className="flex-1">
-                    <h3 className="text-lg font-semibold text-white mb-1">Weekly Digest</h3>
-                    <p className="text-blue-200/80 text-sm">Weekly summary of your cultural learning progress</p>
-                  </div>
+              <div className="flex items-center gap-4">
+                <Clock className="w-6 h-6 text-orange-400" />
+                <div className="flex-1">
+                  <h3 className="text-lg font-semibold text-white mb-1">Weekly Digest</h3>
+                  <p className="text-blue-200/80 text-sm">Weekly summary of your cultural learning progress</p>
                 </div>
-                <label className="relative flex h-8 w-14 cursor-pointer items-center rounded-full bg-white/20 transition-colors has-[:checked]:bg-gradient-to-r has-[:checked]:from-blue-500 has-[:checked]:to-purple-500">
-                  <span className={`h-6 w-6 rounded-full bg-white shadow-lg transition-transform ${settings.weeklyDigest ? 'translate-x-7' : 'translate-x-1'}`}></span>
-                  <input
-                    type="checkbox"
-                    checked={settings.weeklyDigest}
-                    onChange={() => handleToggle('weeklyDigest')}
-                    className="sr-only"
-                  />
-                </label>
               </div>
+              <label className="relative flex h-8 w-14 cursor-pointer items-center rounded-full bg-white/20 transition-colors has-[:checked]:bg-gradient-to-r has-[:checked]:from-blue-500 has-[:checked]:to-purple-500">
+                <span className={`h-6 w-6 rounded-full bg-white shadow-lg transition-transform ${settings.weeklyDigest ? 'translate-x-7' : 'translate-x-1'}`}></span>
+                <input
+                  type="checkbox"
+                  checked={settings.weeklyDigest}
+                  onChange={() => handleToggle('weeklyDigest')}
+                  className="sr-only"
+                />
+              </label>
             </div>
           </div>
         </section>

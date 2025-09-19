@@ -1,5 +1,5 @@
-import React, { useState } from 'react';
-import { ArrowLeft, Shield, Eye, Download, Trash2, FileText, Users, Globe, Lock } from 'lucide-react';
+import { useState } from 'react';
+import { ArrowLeft, Shield, Eye, Download, Trash2, FileText, Lock } from 'lucide-react';
 
 interface PrivacySettingsPageProps {
   onBack: () => void;

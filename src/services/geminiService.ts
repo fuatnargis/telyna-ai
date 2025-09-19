@@ -286,7 +286,6 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
 
   generateWelcomeMessage(context: ChatContext): string {
     const { country, purpose, userProfile } = context;
-    const languageName = this.getLanguageName(this.detectedLanguage);
     
     // Kullanıcı profil bilgilerine göre kişiselleştirilmiş karşılama mesajı
     const personalizedGreeting = userProfile ? {

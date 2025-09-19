@@ -1,5 +1,5 @@
-import React, { useState, useEffect } from 'react';
-import { Globe, MessageCircle, User, Sparkles, ChevronRight, ArrowRight, Star, Zap } from 'lucide-react';
+import { useState, useEffect } from 'react';
+import { Globe, MessageCircle, User, Sparkles, ArrowRight, Star, Zap } from 'lucide-react';
 import CountrySelect from '../ui/CountrySelect';
 import PurposeSelector from '../ui/PurposeSelector';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
@@ -165,7 +165,7 @@ export default function WelcomePage({ user, onStartChat, onOpenChat, onOpenProfi
               <h3 className="text-2xl font-bold text-white">Recent Conversations</h3>
             </div>
             <div className="space-y-4 relative z-[-1]">
-              {pastChats.slice(0, 3).map((chat, index) => (
+              {pastChats.slice(0, 3).map((chat, _index) => (
                 <div
                   key={chat.id}
                   onClick={() => onOpenChat(chat)}
