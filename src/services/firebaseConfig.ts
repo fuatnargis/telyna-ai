@@ -13,7 +13,10 @@ const firebaseConfig = {
 
 // Firebase yapılandırmasını kontrol et
 if (!firebaseConfig.apiKey || !firebaseConfig.authDomain || !firebaseConfig.projectId) {
-  console.warn('Firebase yapılandırması eksik! Demo modunda çalışıyor.');
+  console.error('Firebase yapılandırması eksik! Lütfen .env dosyanızı kontrol edin.');
+  console.log('Firebase Config:', firebaseConfig);
+} else {
+  console.log('Firebase yapılandırması başarılı.');
 }
 
 // Firebase'i başlat
