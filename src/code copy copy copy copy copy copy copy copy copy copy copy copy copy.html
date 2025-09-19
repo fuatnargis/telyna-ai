@@ -1,0 +1,261 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CultureWise AI - Profile Setup</title>
+<link href="https://fonts.googleapis.com" rel="preconnect"/>
+<link crossorigin="" href="https://fonts.gstatic.com" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;600;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+        :root {
+            --neutral-900: #121821;
+            --neutral-800: #1f2937;
+            --neutral-700: #374151;
+            --neutral-400: #9ca3af;
+            --neutral-300: #d1d5db;
+            --neutral-50: #f8fafc;
+            --primary-500: #124797;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+            color: var(--neutral-50);
+        }
+        .form-input, .form-select, .form-button {
+            background-color: var(--neutral-800);
+            border-color: var(--neutral-700);
+            color: var(--neutral-50);
+        }
+        .form-input:focus, .form-select:focus {
+            border-color: var(--primary-500);
+            --tw-ring-color: var(--primary-500);
+        }
+        .focus-ring {
+            --tw-ring-offset-shadow: var(--tw-ring-inset) 0 0 0 var(--tw-ring-offset-width) var(--tw-ring-offset-color);
+            --tw-ring-shadow: var(--tw-ring-inset) 0 0 0 calc(2px + var(--tw-ring-offset-width)) var(--tw-ring-color);
+            box-shadow: var(--tw-ring-offset-shadow), var(--tw-ring-shadow), var(--tw-shadow, 0 0 #0000);
+        }
+        input[type="radio"] {
+            display: none;
+        }
+        input[type="radio"] + label {
+            cursor: pointer;
+            background-color: var(--neutral-700);
+            color: var(--neutral-300);
+            border-radius: 0.5rem;
+            padding: 0.625rem 1rem;
+            transition: all 0.2s ease-in-out;
+            text-align: center;
+        }
+        input[type="radio"]:checked + label {
+            background-color: var(--primary-500);
+            color: var(--neutral-50);
+            font-weight: 500;
+        }
+    </style>
+<style>
+      body {
+        min-height: max(884px, 100dvh);
+      }
+    </style>
+</head>
+<body class="bg-neutral-900">
+<div class="flex flex-col min-h-screen mx-auto max-w-md">
+<main class="flex-grow p-6">
+<header class="mb-8 pt-12">
+<h1 class="text-3xl font-bold text-[var(--neutral-50)]">Profile Setup</h1>
+<p class="text-neutral-400 mt-2">Personalize your experience to get the best out of CultureWise AI.</p>
+</header>
+<div class="space-y-6 pb-24">
+<div class="bg-[var(--neutral-800)] rounded-xl p-5">
+<h2 class="text-lg font-semibold text-[var(--neutral-50)] mb-4">Personal Info</h2>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-neutral-300 mb-1" for="name">Name</label>
+<input class="w-full bg-[var(--neutral-700)] border-transparent rounded-lg shadow-sm focus:ring-2 focus:ring-[var(--primary-500)] focus:border-[var(--primary-500)] text-[var(--neutral-50)] placeholder-neutral-400" id="name" name="name" placeholder="Enter your name" type="text"/>
+</div>
+<div>
+<label class="block text-sm font-medium text-neutral-300 mb-1">Gender</label>
+<div class="grid grid-cols-3 gap-2">
+<div>
+<input checked="" id="male" name="gender" type="radio" value="male"/>
+<label class="block" for="male">Male</label>
+</div>
+<div>
+<input id="female" name="gender" type="radio" value="female"/>
+<label class="block" for="female">Female</label>
+</div>
+<div>
+<input id="other" name="gender" type="radio" value="other"/>
+<label class="block" for="other">Other</label>
+</div>
+</div>
+</div>
+<div>
+<label class="block text-sm font-medium text-neutral-300 mb-1" for="age">Age Range</label>
+<select class="w-full bg-[var(--neutral-700)] border-transparent rounded-lg shadow-sm focus:ring-2 focus:ring-[var(--primary-500)] focus:border-[var(--primary-500)] text-[var(--neutral-50)]" id="age" name="age">
+<option>18-24</option>
+<option>25-34</option>
+<option>35-44</option>
+<option>45-55</option>
+<option>65+</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-neutral-300 mb-1" for="country-input">Current Country</label>
+<input class="w-full bg-[var(--neutral-700)] border-transparent rounded-lg shadow-sm focus:ring-2 focus:ring-[var(--primary-500)] focus:border-[var(--primary-500)] text-[var(--neutral-50)] mb-2" id="country-input" name="country-input" placeholder="Type to search country..." type="text" autocomplete="off"/>
+<ul id="country-list" class="w-full bg-[var(--neutral-700)] rounded-lg max-h-60 overflow-y-auto border border-gray-700">
+<!-- Dinamik olarak ülkeler buraya gelecek -->
+</ul>
+</div>
+</div>
+</div>
+<div class="bg-[var(--neutral-800)] rounded-xl p-5">
+<h2 class="text-lg font-semibold text-[var(--neutral-50)] mb-4">Professional Profile</h2>
+<div class="space-y-4">
+<div>
+<label class="block text-sm font-medium text-neutral-300 mb-1" for="role">Role</label>
+<select class="w-full bg-[var(--neutral-700)] border-transparent rounded-lg shadow-sm focus:ring-2 focus:ring-[var(--primary-500)] focus:border-[var(--primary-500)] text-[var(--neutral-50)]" id="role" name="role">
+<option>Software Engineer</option>
+<option>Designer</option>
+<option>Product Manager</option>
+<option>Marketer</option>
+<option>Doctor</option>
+<option>Nurse</option>
+<option>Teacher</option>
+<option>Professor</option>
+<option>Lawyer</option>
+<option>Accountant</option>
+<option>Architect</option>
+<option>Civil Engineer</option>
+<option>Mechanical Engineer</option>
+<option>Electrical Engineer</option>
+<option>Pharmacist</option>
+<option>Dentist</option>
+<option>Chef</option>
+<option>Police Officer</option>
+<option>Firefighter</option>
+<option>Journalist</option>
+<option>Photographer</option>
+<option>Pilot</option>
+<option>Flight Attendant</option>
+<option>Scientist</option>
+<option>Biologist</option>
+<option>Chemist</option>
+<option>Physicist</option>
+<option>Psychologist</option>
+<option>Social Worker</option>
+<option>Veterinarian</option>
+<option>Farmer</option>
+<option>Plumber</option>
+<option>Electrician</option>
+<option>Mechanic</option>
+<option>Driver</option>
+<option>Salesperson</option>
+<option>Receptionist</option>
+<option>Waiter</option>
+<option>Barista</option>
+<option>Artist</option>
+<option>Musician</option>
+<option>Actor</option>
+<option>Writer</option>
+<option>Translator</option>
+<option>IT Specialist</option>
+<option>Data Analyst</option>
+<option>Business Analyst</option>
+<option>Consultant</option>
+<option>HR Specialist</option>
+<option>Project Manager</option>
+</select>
+</div>
+<div>
+<label class="block text-sm font-medium text-neutral-300 mb-1" for="industry">Industry</label>
+<select class="w-full bg-[var(--neutral-700)] border-transparent rounded-lg shadow-sm focus:ring-2 focus:ring-[var(--primary-500)] focus:border-[var(--primary-500)] text-[var(--neutral-50)]" id="industry" name="industry">
+<option>Technology</option>
+<option>Healthcare</option>
+<option>Education</option>
+<option>Finance</option>
+<option>Construction</option>
+<option>Manufacturing</option>
+<option>Retail</option>
+<option>Hospitality</option>
+<option>Transportation</option>
+<option>Media</option>
+<option>Entertainment</option>
+<option>Legal</option>
+<option>Government</option>
+<option>Real Estate</option>
+<option>Telecommunications</option>
+<option>Energy</option>
+<option>Agriculture</option>
+<option>Automotive</option>
+<option>Food & Beverage</option>
+<option>Pharmaceutical</option>
+<option>Insurance</option>
+<option>Consulting</option>
+<option>Nonprofit</option>
+<option>Sports</option>
+<option>Fashion</option>
+<option>Tourism</option>
+<option>Logistics</option>
+<option>Mining</option>
+<option>Utilities</option>
+<option>Environmental</option>
+</select>
+</div>
+</div>
+</div>
+</div>
+</main>
+<footer class="sticky bottom-0 bg-[var(--neutral-900)]/80 backdrop-blur-sm p-4 w-full max-w-md mx-auto">
+<button class="w-full bg-[var(--primary-500)] text-[var(--neutral-50)] font-bold py-4 px-4 rounded-xl shadow-lg hover:bg-opacity-90 focus:outline-none focus-ring focus:ring-[var(--primary-500)] focus:ring-offset-2 focus:ring-offset-[var(--neutral-900)] transition-colors">
+            Continue
+        </button>
+</footer>
+</div>
+<script>
+const countries = [
+"United States","United Kingdom","Canada","Germany","France","Italy","Spain","Australia","Japan","China","India","Brazil","Russia","Mexico","Turkey","Netherlands","Switzerland","South Korea","Sweden","Belgium","Norway","Denmark","Finland","Austria","Ireland","Poland","Portugal","Greece","Czech Republic","Hungary","Romania","New Zealand","Argentina","Chile","South Africa","Egypt","Israel","Saudi Arabia","United Arab Emirates","Singapore","Malaysia","Thailand","Indonesia","Philippines","Vietnam","Pakistan","Bangladesh","Ukraine","Colombia","Peru","Venezuela","Nigeria","Kenya","Morocco","Algeria","Tunisia","Ethiopia","Ghana","Ivory Coast","Qatar","Kuwait","Oman","Jordan","Lebanon","Kazakhstan","Uzbekistan","Azerbaijan","Georgia","Armenia","Belarus","Slovakia","Slovenia","Croatia","Bulgaria","Serbia","Bosnia and Herzegovina","Montenegro","North Macedonia","Estonia","Latvia","Lithuania","Luxembourg","Iceland","Malta","Cyprus","Costa Rica","Panama","Uruguay","Paraguay","Bolivia","Ecuador","Guatemala","Honduras","El Salvador","Nicaragua","Jamaica","Trinidad and Tobago","Dominican Republic","Cuba","Bahamas","Barbados","Fiji","Papua New Guinea","Cambodia","Laos","Mongolia","Nepal","Sri Lanka","Myanmar","Brunei","Bahrain","Yemen","Syria","Iraq","Iran","Afghanistan","Somalia","Sudan","Libya","Zimbabwe","Zambia","Uganda","Tanzania","Mozambique","Botswana","Namibia","Angola","Cameroon","Senegal","Mali","Niger","Burkina Faso","Benin","Madagascar","Rwanda","Burundi","Malawi","Sierra Leone","Liberia","Gabon","Congo","Democratic Republic of the Congo","Togo","Chad","Mauritania","Guinea","Guinea-Bissau","Equatorial Guinea","Djibouti","Eritrea","Lesotho","Swaziland","Gambia","Cape Verde","Comoros","Seychelles","Mauritius","Samoa","Tonga","Vanuatu","Solomon Islands","Kiribati","Tuvalu","Palau","Micronesia","Marshall Islands","Nauru","Monaco","San Marino","Liechtenstein","Andorra","Vatican City"
+];
+
+const input = document.getElementById('country-input');
+const list = document.getElementById('country-list');
+
+function showCountries(filter = "") {
+    list.innerHTML = "";
+    let filtered = countries;
+    if (filter) {
+        filtered = countries.filter(c => c.toLowerCase().startsWith(filter.toLowerCase()));
+    }
+    filtered.forEach(country => {
+        const li = document.createElement('li');
+        li.textContent = country;
+        li.className = 'px-4 py-2 hover:bg-gray-600 cursor-pointer';
+        li.onclick = () => {
+            input.value = country;
+            list.innerHTML = "";
+        };
+        list.appendChild(li);
+    });
+}
+showCountries();
+
+input.addEventListener('input', function() {
+    showCountries(input.value);
+});
+
+input.addEventListener('focus', function() {
+    showCountries(input.value);
+});
+
+document.addEventListener('click', function(e) {
+    if (!input.contains(e.target) && !list.contains(e.target)) {
+        list.innerHTML = "";
+    }
+});
+</script>
+</body>
+</html>

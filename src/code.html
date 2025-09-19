@@ -1,0 +1,65 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<title>CultureWise AI - Optimization</title>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700&amp;display=swap" rel="stylesheet"/>
+<link href="https://fonts.googleapis.com/css2?family=Material+Symbols+Outlined" rel="stylesheet"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+        :root {
+            --neutral-900: #121821;
+            --neutral-100: #F3F4F6;
+            --neutral-700: #374151;
+            --primary-500: #3B82F6;
+        }
+        body {
+            font-family: 'Inter', sans-serif;
+            background-color: var(--neutral-900);
+        }
+        .sparkle-animation {
+            animation: sparkle 1.5s infinite;
+        }
+        @keyframes sparkle {
+            0%, 100% { transform: scale(1); opacity: 1; }
+            50% { transform: scale(1.2); opacity: 0.7; }
+        }
+    </style>
+<style>
+        body {
+            min-height: max(884px, 100dvh);
+        }
+    </style>
+</head>
+<body class="bg-[var(--neutral-900)]">
+<div class="flex flex-col h-screen justify-center items-center p-6 text-center">
+    <div class="mb-8 sparkle-animation">
+        <span class="material-symbols-outlined text-6xl text-[var(--neutral-100)]">
+            auto_awesome
+        </span>
+    </div>
+    <h1 class="text-2xl font-medium text-[var(--neutral-100)] mb-6">
+        Optimizing Your Cultural AI Guide...
+    </h1>
+    <div class="w-full max-w-xs bg-[var(--neutral-700)] rounded-full h-2.5">
+        <div id="progress-bar" class="bg-[var(--primary-500)] h-2.5 rounded-full" style="width: 0%"></div>
+    </div>
+</div>
+<script>
+    // Yüklenme çubuğu animasyonu (daha yavaş)
+    const progressBar = document.getElementById('progress-bar');
+    let width = 0;
+    function animateBar() {
+        if (width < 100) {
+            width += 1;
+            progressBar.style.width = width + '%';
+            setTimeout(animateBar, 25); // Daha yavaş animasyon için 25ms gecikme
+        }
+    }
+    animateBar();
+</script>
+<!-- ...existing code... -->
+</body>
+</html>

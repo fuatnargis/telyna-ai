@@ -1,0 +1,155 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="utf-8"/>
+<meta content="width=device-width, initial-scale=1.0" name="viewport"/>
+<link crossorigin="" href="https://fonts.gstatic.com/" rel="preconnect"/>
+<link as="style" href="https://fonts.googleapis.com/css2?display=swap&amp;family=Inter%3Awght%40400%3B500%3B700%3B900&amp;family=Noto+Sans%3Awght%40400%3B500%3B700%3B900" onload="this.rel='stylesheet'" rel="stylesheet"/>
+<title>CultureWise AI</title>
+<link href="data:image/x-icon;base64," rel="icon" type="image/x-icon"/>
+<script src="https://cdn.tailwindcss.com?plugins=forms,container-queries"></script>
+<style type="text/tailwindcss">
+    :root {
+      --neutral-900: #121821;
+      --neutral-50: #f8fafc;
+      --primary-500: #124797;
+      --vibrant-orange: #F97316;
+      --text-color: #111827;}
+    body {
+      background-color: var(--neutral-900);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+<style>
+    body {
+      min-height: max(884px, 100dvh);
+    }
+  </style>
+</head>
+<body class="bg-[var(--neutral-900)]">
+<div class="relative flex size-full min-h-screen flex-col group/design-root overflow-x-hidden text-white" style='font-family: Inter, "Noto Sans", sans-serif;'>
+<div class="flex flex-col flex-1">
+<header class="flex items-center p-4 pb-2 justify-center">
+<h1 class="text-xl font-bold text-center flex-1 text-[var(--neutral-50)]">CultureWise AI</h1>
+</header>
+<main class="flex-1 px-4 py-6 space-y-8">
+<div class="space-y-4">
+<label class="text-lg font-semibold text-[var(--neutral-50)] px-1" for="country-input">Select Country</label>
+<div class="relative">
+  <input type="text" id="country-input" autocomplete="off"
+    class="w-full rounded-xl border-none bg-[var(--neutral-50)] text-[var(--text-color)] h-14 pl-4 pr-10 text-base focus:ring-2 focus:ring-inset focus:ring-white"
+    placeholder="Type to search country..." />
+  <ul id="country-list" class="absolute z-10 w-full bg-white rounded-xl shadow-lg mt-1 max-h-60 overflow-auto hidden text-[var(--text-color)]"></ul>
+</div>
+</div>
+<div class="space-y-4">
+<h2 class="text-lg font-semibold text-[var(--neutral-50)] px-1">What's your purpose?</h2>
+<div class="space-y-3">
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Business Meeting</span>
+</label>
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Tourism</span>
+</label>
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Daily Life</span>
+</label>
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Emergency</span>
+</label>
+<!-- Yeni önemli konular -->
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Education</span>
+</label>
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Healthcare</span>
+</label>
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Shopping</span>
+</label>
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Transportation</span>
+</label>
+<label class="flex items-center gap-4 rounded-xl bg-[var(--neutral-50)] text-[var(--text-color)] p-4 text-base font-medium has-[:checked]:ring-2 has-[:checked]:ring-white transition-all">
+<input class="form-radio h-5 w-5 text-[var(--primary-500)] focus:ring-offset-0 focus:ring-2 focus:ring-[var(--primary-500)] border-gray-400" name="purpose" type="radio"/>
+<span>Accommodation</span>
+</label>
+</div>
+</div>
+</main>
+</div>
+<footer class="sticky bottom-0 bg-gradient-to-t from-[var(--neutral-900)] to-transparent p-4 pt-8">
+<button class="w-full h-14 rounded-xl bg-[var(--vibrant-orange)] text-white text-lg font-bold hover:bg-orange-500 active:bg-orange-600 transition-colors">
+        Start Cultural Chat
+      </button>
+</footer>
+</div>
+<script>
+const countries = [
+  "Afghanistan","Albania","Algeria","Andorra","Angola","Antigua and Barbuda","Argentina","Armenia","Australia","Austria","Azerbaijan",
+  "Bahamas","Bahrain","Bangladesh","Barbados","Belarus","Belgium","Belize","Benin","Bhutan","Bolivia","Bosnia and Herzegovina","Botswana",
+  "Brazil","Brunei","Bulgaria","Burkina Faso","Burundi","Cabo Verde","Cambodia","Cameroon","Canada","Central African Republic","Chad",
+  "Chile","China","Colombia","Comoros","Congo","Costa Rica","Croatia","Cuba","Cyprus","Czech Republic","Denmark","Djibouti","Dominica",
+  "Dominican Republic","Ecuador","Egypt","El Salvador","Equatorial Guinea","Eritrea","Estonia","Eswatini","Ethiopia","Fiji","Finland",
+  "France","Gabon","Gambia","Georgia","Germany","Ghana","Greece","Grenada","Guatemala","Guinea","Guinea-Bissau","Guyana","Haiti",
+  "Honduras","Hungary","Iceland","India","Indonesia","Iran","Iraq","Ireland","Israel","Italy","Jamaica","Japan","Jordan","Kazakhstan",
+  "Kenya","Kiribati","Korea, North","Korea, South","Kosovo","Kuwait","Kyrgyzstan","Laos","Latvia","Lebanon","Lesotho","Liberia","Libya",
+  "Liechtenstein","Lithuania","Luxembourg","Madagascar","Malawi","Malaysia","Maldives","Mali","Malta","Marshall Islands","Mauritania",
+  "Mauritius","Mexico","Micronesia","Moldova","Monaco","Mongolia","Montenegro","Morocco","Mozambique","Myanmar","Namibia","Nauru","Nepal",
+  "Netherlands","New Zealand","Nicaragua","Niger","Nigeria","North Macedonia","Norway","Oman","Pakistan","Palau","Palestine","Panama",
+  "Papua New Guinea","Paraguay","Peru","Philippines","Poland","Portugal","Qatar","Romania","Russia","Rwanda","Saint Kitts and Nevis",
+  "Saint Lucia","Saint Vincent and the Grenadines","Samoa","San Marino","Sao Tome and Principe","Saudi Arabia","Senegal","Serbia",
+  "Seychelles","Sierra Leone","Singapore","Slovakia","Slovenia","Solomon Islands","Somalia","South Africa","South Sudan","Spain",
+  "Sri Lanka","Sudan","Suriname","Sweden","Switzerland","Syria","Taiwan","Tajikistan","Tanzania","Thailand","Timor-Leste","Togo","Tonga",
+  "Trinidad and Tobago","Tunisia","Turkey","Turkmenistan","Tuvalu","Uganda","Ukraine","United Arab Emirates","United Kingdom",
+  "United States","Uruguay","Uzbekistan","Vanuatu","Vatican City","Venezuela","Vietnam","Yemen","Zambia","Zimbabwe"
+];
+
+const input = document.getElementById('country-input');
+const list = document.getElementById('country-list');
+
+input.addEventListener('input', function() {
+  const val = input.value.trim().toLowerCase();
+  list.innerHTML = '';
+  if (val.length === 0) {
+    list.classList.add('hidden');
+    return;
+  }
+  const filtered = countries.filter(c => c.toLowerCase().startsWith(val));
+  if (filtered.length === 0) {
+    list.classList.add('hidden');
+    return;
+  }
+  filtered.forEach(country => {
+    const li = document.createElement('li');
+    li.textContent = country;
+    li.className = 'px-4 py-2 cursor-pointer hover:bg-gray-100';
+    li.onclick = () => {
+      input.value = country;
+      list.classList.add('hidden');
+    };
+    list.appendChild(li);
+  });
+  list.classList.remove('hidden');
+});
+
+document.addEventListener('click', function(e) {
+  if (!input.contains(e.target) && !list.contains(e.target)) {
+    list.classList.add('hidden');
+  }
+});
+</script>
+</body>
+</html>
