@@ -13,10 +13,21 @@ export interface User {
   subscriptionExpiry?: Date;
 }
 
+export type Purpose = 
+  | 'Business Meeting'
+  | 'Tourism'
+  | 'Daily Life'
+  | 'Emergency'
+  | 'Education'
+  | 'Healthcare'
+  | 'Shopping'
+  | 'Transportation'
+  | 'Accommodation';
+
 export interface Chat {
   id: string;
   country: string;
-  purpose: string;
+  purpose: Purpose; // Tipini string'den Purpose'a güncelledim
   date: string;
   messages: Message[];
 }
@@ -32,17 +43,6 @@ export interface Country {
   name: string;
   code: string;
 }
-
-export type Purpose = 
-  | 'Business Meeting'
-  | 'Tourism'
-  | 'Daily Life'
-  | 'Emergency'
-  | 'Education'
-  | 'Healthcare'
-  | 'Shopping'
-  | 'Transportation'
-  | 'Accommodation';
 
 export interface AuthState {
   isAuthenticated: boolean;

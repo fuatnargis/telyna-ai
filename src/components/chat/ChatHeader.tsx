@@ -1,4 +1,4 @@
-import React, { useState } from 'react';
+import { useState } from 'react';
 import { ArrowLeft, MoreVertical, Copy, Share, Trash2 } from 'lucide-react';
 
 interface ChatHeaderProps {

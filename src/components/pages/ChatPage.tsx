@@ -1,4 +1,4 @@
-import React, { useState, useRef, useEffect } from 'react';
+import { useState, useEffect } from 'react';
 import { geminiService } from '../../services/geminiService';
 import { useLocalStorage } from '../../hooks/useLocalStorage';
 import type { Chat, Message } from '../../types';
@@ -18,7 +18,6 @@ interface ChatPageProps {
 }
 
 export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageProps) {
-  const [inputMessage, setInputMessage] = useState('');
   const [messages, setMessages] = useState<Message[]>([]);
   const [isLoading, setIsLoading] = useState(false);
   const [isRecording, setIsRecording] = useState(false);
@@ -139,7 +138,6 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
   const handleClearChat = () => {
     setMessages([]);
     setIsInitialized(false);
-    // setShowMenu(false); // Bu state artık ChatHeader içinde yönetiliyor
   };
 
   const handleCopyChat = () => {
@@ -148,7 +146,6 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
     ).join('\n');
     navigator.clipboard.writeText(chatText);
     alert('Chat copied to clipboard!');
-    // setShowMenu(false);
   };
 
   const handleShareChat = () => {
@@ -161,7 +158,6 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
     } else {
       alert('Share feature not supported on this device');
     }
-    // setShowMenu(false);
   };
 
   const handleFileUpload = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -189,7 +185,6 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
         setMessages(finalMessages);
       }, 1000);
     }
-    // setShowPlusMenu(false); // Bu state artık MessageInput içinde yönetiliyor
   };
 
   const handleVoiceMessage = () => {
@@ -238,7 +233,7 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
 
     const newMessages = [...messages, userMessage];
     setMessages(newMessages);
-    setInputMessage(''); // Clear input after sending
+    // setInputMessage(''); // MessageInput artık kendi state'ini yönetiyor
     setIsLoading(true);
 
     try {
@@ -308,15 +303,6 @@ export default function ChatPage({ chat, user, onBack, onUpdateChat }: ChatPageP
     } finally {
       setIsLoading(false);
     }
-  };
-
-  const handleSuggestionClick = (suggestion: string) => {
-    setInputMessage(suggestion); // Set suggestion to input field
-    setShowSuggestions(false);
-    // Auto send the suggestion
-    setTimeout(() => {
-      handleSendMessage(suggestion);
-    }, 100);
   };
 
   if (!chat) {

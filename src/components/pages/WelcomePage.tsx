@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState } from 'react';
 import { Globe, MessageCircle, User, Sparkles, ArrowRight, Star, Zap } from 'lucide-react';
 import CountrySelect from '../ui/CountrySelect';
 import PurposeSelector from '../ui/PurposeSelector';
