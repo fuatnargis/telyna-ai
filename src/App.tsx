@@ -17,6 +17,7 @@ import AboutPage from './components/pages/AboutPage';
 import PremiumAdPage from './components/pages/PremiumAdPage';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import type { Chat, Purpose, User } from './types';
+import { firebaseConfig } from './services/firebaseConfig'; // firebaseConfig'i import et
 
 type AppState = 
   | 'onboarding'
@@ -33,19 +34,29 @@ type AppState =
   | 'notification-settings'
   | 'help-support'
   | 'language-settings'
-  | 'about';
+  | 'about'
+  | 'error-firebase-config'; // Yeni hata durumu
 
 function App() {
   const [appState, setAppState] = useState<AppState>('onboarding');
   const [hasSeenOnboarding, setHasSeenOnboarding] = useLocalStorage<boolean>('hasSeenOnboarding', false);
-  const [, setPastChats] = useLocalStorage<Chat[]>('pastChats', []); // pastChats kullanılmadığı için destructure edildi
+  const [, setPastChats] = useLocalStorage<Chat[]>('pastChats', []);
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [pendingChat, setPendingChat] = useState<{ country: string; purpose: Purpose } | null>(null);
   
   const { user: authUser, profile, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword, updatePassword } = useAuth();
   
+  // Firebase yapılandırmasını kontrol et
+  const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId;
+  
   // Check authentication status on app load
   useEffect(() => {
+    // Firebase yapılandırması eksikse hata ekranına yönlendir
+    if (!isFirebaseConfigured) {
+      setAppState('error-firebase-config');
+      return;
+    }
+
     // İlk olarak onboarding durumunu kontrol et
     if (!hasSeenOnboarding) {
       setAppState('onboarding');
@@ -60,9 +71,6 @@ function App() {
 
     // Yükleme tamamlandıktan sonra kullanıcı durumuna göre yönlendirme yap
     if (authUser) {
-      // authUser mevcut ama profil henüz yüklenmediyse veya null ise optimizing'de kal
-      // useAuth'taki loading durumu, profilin yüklenmesini de kapsadığı için bu kontrol yeterli.
-      // Eğer loading false ise ve authUser var ama profile null ise, profilin oluşturulması gerekiyor.
       if (!profile) {
         setAppState('profile-setup');
       } else if (!profile.isProfileComplete) {
@@ -73,7 +81,7 @@ function App() {
     } else {
       setAppState('auth');
     }
-  }, [authUser, profile, loading, hasSeenOnboarding]);
+  }, [authUser, profile, loading, hasSeenOnboarding, isFirebaseConfigured]); // isFirebaseConfigured bağımlılıklara eklendi
 
   const handleOnboardingComplete = () => {
     setHasSeenOnboarding(true);
@@ -84,12 +92,6 @@ function App() {
     // Kimlik doğrulama başarılı olduğunda, useEffect authUser ve profile durumuna göre yönlendirecektir.
     // Bu fonksiyonun içi boş kalabilir, çünkü useEffect zaten durumu izliyor.
   };
-
-  // handleResetPassword fonksiyonu kullanılmadığı için kaldırıldı.
-  // const handleResetPassword = (newPassword: string, confirmPassword: string) => {
-  //   // Şifre sıfırlama ResetPasswordPage'de ele alınır
-  //   setAppState('auth');
-  // };
 
   const handleProfileSetupComplete = async (profileData: any) => {
     if (authUser) {
@@ -216,6 +218,21 @@ function App() {
     industry: profile.industry,
     isProfileComplete: profile.isProfileComplete
   } : null;
+
+  // Yeni hata durumu için render
+  if (appState === 'error-firebase-config') {
+    return (
+      <div className="min-h-screen bg-red-900 flex flex-col items-center justify-center text-white p-4 text-center">
+        <h1 className="text-3xl font-bold mb-4">Hata: Firebase Yapılandırması Eksik!</h1>
+        <p className="text-lg mb-6">
+          Uygulama başlatılamıyor. Lütfen `.env` dosyanızdaki Firebase API anahtarlarını kontrol edin.
+        </p>
+        <p className="text-sm text-red-200">
+          `VITE_FIREBASE_API_KEY`, `VITE_FIREBASE_AUTH_DOMAIN`, `VITE_FIREBASE_PROJECT_ID` gibi değişkenlerin doğru ayarlandığından emin olun.
+        </p>
+      </div>
+    );
+  }
 
   // 'optimizing' durumu için özel bir yükleme ekranı göster
   if (appState === 'optimizing') {
