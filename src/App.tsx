@@ -17,7 +17,7 @@ import AboutPage from './components/pages/AboutPage';
 import PremiumAdPage from './components/pages/PremiumAdPage';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import type { Chat, Purpose, User } from './types';
-import { firebaseConfig } from './services/firebaseConfig'; // firebaseConfig'i import et
+import { firebaseConfig } from './services/firebaseConfig';
 
 type AppState = 
   | 'onboarding'
@@ -35,7 +35,7 @@ type AppState =
   | 'help-support'
   | 'language-settings'
   | 'about'
-  | 'error-firebase-config'; // Yeni hata durumu
+  | 'error-firebase-config';
 
 function App() {
   const [appState, setAppState] = useState<AppState>('onboarding');
@@ -46,10 +46,8 @@ function App() {
   
   const { user: authUser, profile, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword, updatePassword } = useAuth();
   
-  // Firebase yapılandırmasını kontrol et
   const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId;
   
-  // Check authentication status on app load
   useEffect(() => {
     console.log('App.tsx useEffect: Running state determination.');
     console.log(`  isFirebaseConfigured: ${isFirebaseConfigured}`);
@@ -58,32 +56,31 @@ function App() {
     console.log(`  useAuth.authUser: ${authUser ? authUser.email : 'null'}`);
     console.log(`  useAuth.profile: ${profile ? profile.name : 'null'}`);
 
-    // Firebase yapılandırması eksikse hata ekranına yönlendir
     if (!isFirebaseConfigured) {
       setAppState('error-firebase-config');
       console.log('App.tsx useEffect: Setting appState to error-firebase-config.');
       return;
     }
 
-    // İlk olarak onboarding durumunu kontrol et
     if (!hasSeenOnboarding) {
       setAppState('onboarding');
       console.log('App.tsx useEffect: Setting appState to onboarding.');
       return;
     }
 
-    // Kimlik doğrulama veya profil verileri yükleniyorsa 'optimizing' ekranını göster
-    if (loading) {
+    // Eğer useAuth hala yükleniyorsa veya bir chat başlatılmadıysa optimizing ekranını göster
+    if (loading || (pendingChat && appState !== 'optimizing')) {
       setAppState('optimizing');
-      console.log('App.tsx useEffect: Setting appState to optimizing (due to useAuth.loading).');
+      console.log('App.tsx useEffect: Setting appState to optimizing (due to useAuth.loading or pendingChat).');
       return;
     }
 
     // Yükleme tamamlandıktan sonra kullanıcı durumuna göre yönlendirme yap
     if (authUser) {
       if (!profile) {
+        // Kullanıcı oturum açmış ama profili henüz yüklenmemiş veya yok
         setAppState('profile-setup');
-        console.log('App.tsx useEffect: Setting appState to profile-setup (no profile found).');
+        console.log('App.tsx useEffect: Setting appState to profile-setup (no profile found or still loading).');
       } else if (!profile.isProfileComplete) {
         setAppState('profile-setup');
         console.log('App.tsx useEffect: Setting appState to profile-setup (profile incomplete).');
@@ -95,16 +92,14 @@ function App() {
       setAppState('auth');
       console.log('App.tsx useEffect: Setting appState to auth (no authUser).');
     }
-  }, [authUser, profile, loading, hasSeenOnboarding, isFirebaseConfigured]); // isFirebaseConfigured bağımlılıklara eklendi
+  }, [authUser, profile, loading, hasSeenOnboarding, isFirebaseConfigured, pendingChat]);
 
   const handleOnboardingComplete = () => {
     setHasSeenOnboarding(true);
-    // Onboarding tamamlandıktan sonra, useEffect authUser ve profile durumuna göre yönlendirecektir.
   };
   
   const handleAuthSuccess = async () => {
-    // Kimlik doğrulama başarılı olduğunda, useEffect authUser ve profile durumuna göre yönlendirecektir.
-    // Bu fonksiyonun içi boş kalabilir, çünkü useEffect zaten durumu izliyor.
+    // useAuth hook'u authUser ve profile durumunu güncelleyecek, useEffect durumu yönetecek.
   };
 
   const handleProfileSetupComplete = async (profileData: any) => {
@@ -124,7 +119,7 @@ function App() {
 
   const handleStartChat = (country: string, purpose: Purpose) => {
     setPendingChat({ country, purpose });
-    setAppState('optimizing');
+    setAppState('optimizing'); // Chat başlatılmadan önce optimizing ekranına geç
   };
 
   const handleOptimizationComplete = () => {
@@ -220,7 +215,6 @@ function App() {
     setAppState('home');
   };
 
-  // Convert profile to User type for compatibility
   const user: User | null = profile && authUser ? {
     id: profile.auth_id,
     name: profile.name,
@@ -233,7 +227,6 @@ function App() {
     isProfileComplete: profile.isProfileComplete
   } : null;
 
-  // Yeni hata durumu için render
   if (appState === 'error-firebase-config') {
     return (
       <div className="min-h-screen bg-red-900 flex flex-col items-center justify-center text-white p-4 text-center">
@@ -248,7 +241,6 @@ function App() {
     );
   }
 
-  // 'optimizing' durumu için özel bir yükleme ekranı göster
   if (appState === 'optimizing') {
     if (pendingChat) {
       return (
@@ -258,7 +250,7 @@ function App() {
           onComplete={handleOptimizationComplete}
         />
       );
-    } else { // Bu blok, !pendingChat ve loading true olduğunda veya diğer optimizing durumlarında çalışır.
+    } else {
       return (
         <div className="min-h-screen bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 flex items-center justify-center">
           <div className="flex items-center gap-3 text-white">
@@ -270,7 +262,6 @@ function App() {
     }
   }
 
-  // Render based on current state
   switch (appState) {
     case 'onboarding':
       return (
@@ -404,7 +395,6 @@ function App() {
         </div>
       );
   }
-  
 }
 
 export default App;

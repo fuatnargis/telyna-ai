@@ -19,43 +19,46 @@ export interface UseAuthReturn {
 export function useAuth(): UseAuthReturn {
   const [user, setUser] = useState<AuthUser | null>(null);
   const [profile, setProfile] = useState<UserProfile | null>(null);
-  const [loading, setLoading] = useState(true); // Starts true for initial app load
+  const [loading, setLoading] = useState(true); // Başlangıçta true, tüm yükleme bitene kadar
   const [isEmailVerified, setIsEmailVerified] = useState(false);
-  const isInitialAuthCheckComplete = useRef(false); // To ensure initial loading is handled once
+  const isInitialAuthCheckComplete = useRef(false); // İlk kimlik doğrulama ve profil kontrolünün tamamlandığını işaretler
 
   useEffect(() => {
-    console.log('useAuth: useEffect started');
+    console.log('useAuth: useEffect started for auth state changes.');
     const unsubscribe = authService.onAuthStateChange(async (authUserFromService) => {
       console.log('useAuth: onAuthStateChange fired. authUserFromService:', authUserFromService ? authUserFromService.email : 'null');
       
       setUser(authUserFromService);
       
-      try { 
-        if (authUserFromService) {
-          console.log('useAuth: Fetching user profile for:', authUserFromService.id);
+      if (authUserFromService) {
+        console.log('useAuth: Authenticated user found. Fetching user profile for:', authUserFromService.id);
+        try {
           const userProfile = await authService.getUserProfile(authUserFromService.id);
           setProfile(userProfile);
           console.log('useAuth: Profile fetched:', userProfile ? userProfile.name : 'null');
           const emailVerified = authService.checkEmailVerification();
           setIsEmailVerified(emailVerified);
           console.log('useAuth: Email verified:', emailVerified);
-        } else {
-          console.log('useAuth: No authenticated user. Clearing profile.');
-          setProfile(null);
+        } catch (error) {
+          console.error('useAuth: Error fetching user profile:', error);
+          setProfile(null); // Profil yüklenirken hata oluşursa null olarak ayarla
           setIsEmailVerified(false);
+        } finally {
+          // Profil yükleme denemesi bittiğinde loading'i false yap
+          if (!isInitialAuthCheckComplete.current) {
+            console.log('useAuth: Initial auth/profile check complete. Setting loading to false.');
+            setLoading(false);
+            isInitialAuthCheckComplete.current = true;
+          }
         }
-      } catch (error) {
-        console.error('useAuth: Error fetching user profile in onAuthStateChange:', error);
-        setProfile(null); 
+      } else {
+        console.log('useAuth: No authenticated user. Clearing profile and setting loading to false.');
+        setProfile(null);
         setIsEmailVerified(false);
-      } finally {
-        // Ensure loading is set to false only after the initial check is truly complete
+        // Kullanıcı yoksa hemen loading'i false yap
         if (!isInitialAuthCheckComplete.current) {
-          console.log('useAuth: Initial auth/profile check complete. Setting loading to false.');
-          setLoading(false); 
-          isInitialAuthCheckComplete.current = true; // Mark initial check as complete
-        } else {
-          console.log('useAuth: Subsequent auth state change. Not modifying initial loading state.');
+          setLoading(false);
+          isInitialAuthCheckComplete.current = true;
         }
       }
     });
@@ -65,14 +68,14 @@ export function useAuth(): UseAuthReturn {
       if (!isInitialAuthCheckComplete.current) {
         console.warn('useAuth: Auth state did not resolve within 5 seconds. Forcing loading to false.');
         setLoading(false);
-        isInitialAuthCheckComplete.current = true; // Zaman aşımı ile de ilk kontrolü tamamlandı say
+        isInitialAuthCheckComplete.current = true;
       }
     }, 5000); // 5 saniye
 
     return () => {
       console.log('useAuth: useEffect cleanup.');
       unsubscribe();
-      clearTimeout(timeoutId); // Temizleme sırasında zaman aşımını da iptal et
+      clearTimeout(timeoutId);
     };
   }, []);
 
@@ -81,7 +84,6 @@ export function useAuth(): UseAuthReturn {
     console.log(`useAuth: Current state - loading: ${loading}, user: ${user ? user.email : 'null'}, profile: ${profile ? profile.name : 'null'}`);
   }, [loading, user, profile]);
 
-
   // Helper to set loading state for auth actions
   const setAuthActionLoading = () => {
     setLoading(true);
@@ -89,21 +91,17 @@ export function useAuth(): UseAuthReturn {
   };
 
   const signUp = async (email: string, password: string, name: string) => {
-    setAuthActionLoading(); // Set loading true for this action
+    setAuthActionLoading();
     try {
       const result = await authService.signUpWithEmail(email, password, name);
       return { error: result.error };
     } finally {
-      // onAuthStateChange will handle setLoading(false) after the auth state updates
-      // If onAuthStateChange doesn't fire (e.g., due to an error before user is set),
-      // the loading state might remain true. We need to ensure it's reset.
-      // However, for signUp/signIn, onAuthStateChange *should* fire on success/failure.
-      // Let's rely on onAuthStateChange for now, but keep this in mind.
+      // onAuthStateChange will handle setLoading(false)
     }
   };
 
   const signIn = async (email: string, password: string) => {
-    setAuthActionLoading(); // Set loading true for this action
+    setAuthActionLoading();
     try {
       const result = await authService.signInWithEmail(email, password);
       return { error: result.error };
@@ -113,7 +111,7 @@ export function useAuth(): UseAuthReturn {
   };
 
   const signInWithGoogle = async () => {
-    setAuthActionLoading(); // Set loading true for this action
+    setAuthActionLoading();
     try {
       const result = await authService.signInWithGoogle();
       return { error: result.error };
@@ -123,32 +121,27 @@ export function useAuth(): UseAuthReturn {
   };
 
   const signOut = async () => {
-    setAuthActionLoading(); // Set loading true for this action
+    setAuthActionLoading();
     try {
       const result = await authService.signOut();
       if (!result.error) {
         setUser(null);
         setProfile(null);
         setIsEmailVerified(false);
-        // Explicitly set loading to false here as onAuthStateChange might not fire for null user immediately
-        setLoading(false); 
+        setLoading(false); // Çıkışta loading'i hemen false yap
         console.log('useAuth: Sign out successful. Setting loading to false.');
       }
       return result;
     } finally {
-      // If signOut fails, onAuthStateChange might not fire, so loading might remain true.
-      // The explicit setLoading(false) above handles success. For failure, it's still handled by onAuthStateChange.
+      // onAuthStateChange will handle setLoading(false) if signOut fails
     }
   };
 
   const resetPassword = async (email: string) => {
-    // No need to set loading here, as it's a non-auth state changing action
     return await authService.resetPassword(email);
   };
 
   const updatePassword = async (newPassword: string) => {
-    // This changes auth.currentUser, so onAuthStateChange will fire,
-    // but we might want to show loading explicitly for this action too.
     setAuthActionLoading();
     try {
       const result = await authService.updatePassword(newPassword);
@@ -162,7 +155,7 @@ export function useAuth(): UseAuthReturn {
     if (!user) {
       return { error: 'Kullanıcı oturumu bulunamadı' };
     }
-    setAuthActionLoading(); // Profile update is also an async action
+    setAuthActionLoading();
     try {
       const result = await authService.updateUserProfile(user.id, updates);
       
@@ -177,7 +170,6 @@ export function useAuth(): UseAuthReturn {
   };
 
   const resendEmailVerification = async () => {
-    // No need to set loading here
     return await authService.resendEmailVerification();
   };
 
