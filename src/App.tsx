@@ -17,7 +17,7 @@ import AboutPage from './components/pages/AboutPage';
 import PremiumAdPage from './components/pages/PremiumAdPage';
 import { useLocalStorage } from './hooks/useLocalStorage';
 import type { Chat, Purpose, User } from './types';
-import { firebaseConfig } from './services/firebaseConfig';
+import { firebaseConfig, auth, db } from './services/firebaseConfig'; // auth ve db'yi de import et
 
 type AppState = 
   | 'onboarding'
@@ -46,8 +46,16 @@ function App() {
   
   const { user: authUser, profile, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword, updatePassword } = useAuth();
   
-  const isFirebaseConfigured = firebaseConfig.apiKey && firebaseConfig.authDomain && firebaseConfig.projectId;
-  
+  // Firebase yapılandırmasının tamamlanıp tamamlanmadığını kontrol et
+  const isFirebaseConfigured = 
+    firebaseConfig.apiKey && firebaseConfig.apiKey.length > 0 &&
+    firebaseConfig.authDomain && firebaseConfig.authDomain.length > 0 &&
+    firebaseConfig.projectId && firebaseConfig.projectId.length > 0 &&
+    firebaseConfig.storageBucket && firebaseConfig.storageBucket.length > 0 &&
+    firebaseConfig.messagingSenderId && firebaseConfig.messagingSenderId.length > 0 &&
+    firebaseConfig.appId && firebaseConfig.appId.length > 0 &&
+    auth !== null && db !== null; // auth ve db objelerinin de başlatıldığından emin ol
+
   useEffect(() => {
     console.log('App.tsx useEffect: Running state determination.');
     console.log(`  isFirebaseConfigured: ${isFirebaseConfigured}`);
