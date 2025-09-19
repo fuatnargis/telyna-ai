@@ -23,40 +23,13 @@ export function useAuth(): UseAuthReturn {
   const [isEmailVerified, setIsEmailVerified] = useState(false);
 
   useEffect(() => {
-    // İlk yüklemede mevcut kullanıcıyı kontrol et
-    const initializeAuth = async () => {
-      try {
-        const currentUser = authService.getCurrentUser();
-        if (currentUser) {
-          setUser(currentUser);
-          
-          // Kullanıcı profilini yükle
-          const userProfile = await authService.getUserProfile(currentUser.id);
-          setProfile(userProfile);
-          
-          // E-posta doğrulama durumunu kontrol et
-          const emailVerified = authService.checkEmailVerification();
-          setIsEmailVerified(emailVerified);
-        }
-      } catch (error) {
-        console.error('Auth initialization error:', error);
-      } finally {
-        setLoading(false);
-      }
-    };
-
-    initializeAuth();
-
-    // Auth state değişikliklerini dinle
     const unsubscribe = authService.onAuthStateChange(async (authUser) => {
+      setLoading(true); // Auth state değiştiğinde veya ilk yüklendiğinde yükleniyor olarak işaretle
       setUser(authUser);
       
       if (authUser) {
-        // Kullanıcı profilini yükle
         const userProfile = await authService.getUserProfile(authUser.id);
         setProfile(userProfile);
-        
-        // E-posta doğrulama durumunu kontrol et
         const emailVerified = authService.checkEmailVerification();
         setIsEmailVerified(emailVerified);
       } else {
@@ -64,13 +37,13 @@ export function useAuth(): UseAuthReturn {
         setIsEmailVerified(false);
       }
       
-      setLoading(false);
+      setLoading(false); // Tüm veriler yüklendikten sonra loading'i false yap
     });
 
     return () => {
       unsubscribe();
     };
-  }, []);
+  }, []); // İlk render'da ve sadece bir kez çalışır
 
   const signUp = async (email: string, password: string, name: string) => {
     setLoading(true);
@@ -78,7 +51,7 @@ export function useAuth(): UseAuthReturn {
       const result = await authService.signUpWithEmail(email, password, name);
       return { error: result.error };
     } finally {
-      setLoading(false);
+      // setLoading(false); // onAuthStateChange tarafından yönetilecek
     }
   };
 
@@ -88,7 +61,7 @@ export function useAuth(): UseAuthReturn {
       const result = await authService.signInWithEmail(email, password);
       return { error: result.error };
     } finally {
-      setLoading(false);
+      // setLoading(false); // onAuthStateChange tarafından yönetilecek
     }
   };
 
@@ -98,7 +71,7 @@ export function useAuth(): UseAuthReturn {
       const result = await authService.signInWithGoogle();
       return { error: result.error };
     } finally {
-      setLoading(false);
+      // setLoading(false); // onAuthStateChange tarafından yönetilecek
     }
   };
 
@@ -113,7 +86,7 @@ export function useAuth(): UseAuthReturn {
       }
       return result;
     } finally {
-      setLoading(false);
+      // setLoading(false); // onAuthStateChange tarafından yönetilecek
     }
   };
 
@@ -133,7 +106,6 @@ export function useAuth(): UseAuthReturn {
     const result = await authService.updateUserProfile(user.id, updates);
     
     if (!result.error && profile) {
-      // Local state'i güncelle
       setProfile({ ...profile, ...updates });
     }
     
