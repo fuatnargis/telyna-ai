@@ -246,8 +246,8 @@ function App() {
           <div className="w-8 h-8 animate-spin rounded-full border-2 border-slate-500 border-t-blue-500" />
           <span className="text-lg">Verileriniz yükleniyor...</span>
         </div>
-      );
-    }
+      </div>
+    );
   }
 
   // Render based on current state
