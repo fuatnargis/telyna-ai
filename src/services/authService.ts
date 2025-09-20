@@ -14,7 +14,6 @@ import {
   doc, 
   setDoc, 
   getDoc, 
-  updateDoc,
   serverTimestamp 
 } from 'firebase/firestore';
 import { auth, db } from './firebaseConfig';
@@ -36,8 +35,8 @@ export interface AuthResponse {
 
 export interface UserProfile extends User {
   auth_id: string;
-  created_at?: any;
-  updated_at?: any;
+  created_at?: unknown;
+  updated_at?: unknown;
 }
 
 export class AuthService {
@@ -66,7 +65,7 @@ export class AuthService {
   async signUpWithEmail(email: string, password: string, name: string): Promise<AuthResponse> {
     if (!auth) {
       console.error('Firebase Auth service is not initialized.');
-      return { user: null, error: 'Firebase Auth service is not initialized.' };
+      return { user: null, error: 'Firebase yapılandırması eksik. Lütfen .env dosyanızı kontrol edin.' };
     }
     try {
       const userCredential = await createUserWithEmailAndPassword(auth, email, password);
@@ -85,11 +84,12 @@ export class AuthService {
       }
 
       return { user: authUser, error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Sign up error:', error);
       let errorMessage = 'Kayıt işlemi başarısız oldu';
       
-      switch (error.code) {
+      const firebaseError = error as { code?: string };
+      switch (firebaseError.code) {
         case 'auth/email-already-in-use':
           errorMessage = 'Bu e-posta adresi zaten kullanımda';
           break;
@@ -109,23 +109,27 @@ export class AuthService {
   async signInWithEmail(email: string, password: string): Promise<AuthResponse> {
     if (!auth) {
       console.error('Firebase Auth service is not initialized.');
-      return { user: null, error: 'Firebase Auth service is not initialized.' };
+      return { user: null, error: 'Firebase yapılandırması eksik. Lütfen .env dosyanızı kontrol edin.' };
     }
     try {
       const userCredential = await signInWithEmailAndPassword(auth, email, password);
       const authUser = this.firebaseUserToAuthUser(userCredential.user);
 
       return { user: authUser, error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Sign in error:', error);
       let errorMessage = 'Giriş işlemi başarısız oldu';
       
-      switch (error.code) {
+      const firebaseError = error as { code?: string };
+      switch (firebaseError.code) {
         case 'auth/user-not-found':
           errorMessage = 'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı';
           break;
         case 'auth/wrong-password':
           errorMessage = 'Yanlış şifre';
+          break;
+        case 'auth/invalid-credential':
+          errorMessage = 'E-posta adresi veya şifre hatalı';
           break;
         case 'auth/invalid-email':
           errorMessage = 'Geçersiz e-posta adresi';
@@ -143,7 +147,7 @@ export class AuthService {
   async signInWithGoogle(): Promise<AuthResponse> {
     if (!auth) {
       console.error('Firebase Auth service is not initialized.');
-      return { user: null, error: 'Firebase Auth service is not initialized.' };
+      return { user: null, error: 'Firebase yapılandırması eksik. Lütfen .env dosyanızı kontrol edin.' };
     }
     try {
       const result = await signInWithPopup(auth, this.googleProvider);
@@ -159,11 +163,12 @@ export class AuthService {
       }
 
       return { user: authUser, error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Google sign in error:', error);
       let errorMessage = 'Google ile giriş başarısız oldu';
       
-      switch (error.code) {
+      const firebaseError = error as { code?: string };
+      switch (firebaseError.code) {
         case 'auth/popup-closed-by-user':
           errorMessage = 'Giriş penceresi kapatıldı';
           break;
@@ -185,11 +190,12 @@ export class AuthService {
     try {
       await sendPasswordResetEmail(auth, email);
       return { error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Reset password error:', error);
       let errorMessage = 'Şifre sıfırlama e-postası gönderilemedi';
       
-      switch (error.code) {
+      const firebaseError = error as { code?: string };
+      switch (firebaseError.code) {
         case 'auth/user-not-found':
           errorMessage = 'Bu e-posta adresi ile kayıtlı kullanıcı bulunamadı';
           break;
@@ -215,11 +221,12 @@ export class AuthService {
       
       await firebaseUpdatePassword(auth.currentUser, newPassword);
       return { error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Update password error:', error);
       let errorMessage = 'Şifre güncellenemedi';
       
-      switch (error.code) {
+      const firebaseError = error as { code?: string };
+      switch (firebaseError.code) {
         case 'auth/weak-password':
           errorMessage = 'Şifre çok zayıf. En az 6 karakter olmalı';
           break;
@@ -241,7 +248,7 @@ export class AuthService {
     try {
       await firebaseSignOut(auth);
       return { error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Sign out error:', error);
       return { error: 'Çıkış işlemi başarısız oldu' };
     }
@@ -316,10 +323,10 @@ export class AuthService {
     }
     try {
       const docRef = doc(db, 'user_profiles', authId);
-      await updateDoc(docRef, {
+      await setDoc(docRef, {
         ...updates,
         updated_at: serverTimestamp()
-      });
+      }, { merge: true });
 
       return { error: null };
     } catch (error) {
@@ -366,7 +373,7 @@ export class AuthService {
 
       await sendEmailVerification(auth.currentUser);
       return { error: null };
-    } catch (error: any) {
+    } catch (error: unknown) {
       console.error('Resend email verification error:', error);
       return { error: 'Doğrulama e-postası gönderilemedi' };
     }

@@ -15,7 +15,7 @@ export default function MessageList({ messages, isLoadingInitial }: MessageListP
     }
   }, [messages]);
 
-  const formatTime = (timestamp: any): string => {
+  const formatTime = (timestamp: Date | string | number): string => {
     try {
       const date = timestamp instanceof Date ? timestamp : new Date(timestamp);
       if (isNaN(date.getTime())) {

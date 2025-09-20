@@ -69,7 +69,7 @@ export default function AuthPage({ signUp, signIn, signInWithGoogle, onAuthSucce
         // Hem giriş hem de kayıt başarılı olduğunda onAuthSuccess'i çağır
         onAuthSuccess();
       }
-    } catch (error) {
+    } catch {
       setErrors({ general: 'Beklenmeyen bir hata oluştu' });
     } finally {
       setIsSubmitting(false);
@@ -88,7 +88,7 @@ export default function AuthPage({ signUp, signIn, signInWithGoogle, onAuthSucce
       } else {
         onAuthSuccess();
       }
-    } catch (error) {
+    } catch {
       setErrors({ general: 'Google ile giriş başarısız oldu' });
     } finally {
       setIsSubmitting(false);

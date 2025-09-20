@@ -1,4 +1,4 @@
-import { useState, useEffect } from 'react';
+import { useState, useEffect, useCallback } from 'react';
 import { useAuth } from './hooks/useAuth';
 import OnboardingPage from './components/pages/OnboardingPage';
 import AuthPage from './components/pages/AuthPage';
@@ -44,7 +44,7 @@ function App() {
   const [currentChat, setCurrentChat] = useState<Chat | null>(null);
   const [pendingChat, setPendingChat] = useState<{ country: string; purpose: Purpose } | null>(null);
   
-  const { user: authUser, profile, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword, updatePassword } = useAuth();
+  const { user: authUser, profile, loading, signUp, signIn, signInWithGoogle, signOut, updateProfile, resetPassword } = useAuth();
   
   // Firebase yapılandırmasının tamamlanıp tamamlanmadığını kontrol et
   const isFirebaseConfigured = 
@@ -63,6 +63,19 @@ function App() {
     console.log(`  useAuth.loading: ${loading}`);
     console.log(`  useAuth.authUser: ${authUser ? authUser.email : 'null'}`);
     console.log(`  useAuth.profile: ${profile ? profile.name : 'null'}`);
+    console.log(`  current appState: ${appState}`);
+
+    // Eğer zaten chat durumundaysa, state değişikliği yapma
+    if (appState === 'chat') {
+      console.log('App.tsx useEffect: Already in chat state, skipping state change.');
+      return;
+    }
+    
+    // Eğer optimizing durumundaysa ve pendingChat varsa, state değişikliği yapma
+    if (appState === 'optimizing' && pendingChat) {
+      console.log('App.tsx useEffect: Already in optimizing state with pendingChat, skipping state change.');
+      return;
+    }
 
     if (!isFirebaseConfigured) {
       setAppState('error-firebase-config');
@@ -76,19 +89,26 @@ function App() {
       return;
     }
 
-    // Eğer useAuth hala yükleniyorsa veya bir chat başlatılmadıysa optimizing ekranını göster
-    if (loading || (pendingChat && appState !== 'optimizing')) {
+    // Eğer useAuth hala yükleniyorsa optimizing ekranını göster
+    if (loading) {
       setAppState('optimizing');
-      console.log('App.tsx useEffect: Setting appState to optimizing (due to useAuth.loading or pendingChat).');
+      console.log('App.tsx useEffect: Setting appState to optimizing (due to useAuth.loading).');
       return;
     }
 
     // Yükleme tamamlandıktan sonra kullanıcı durumuna göre yönlendirme yap
     if (authUser) {
+      // Profil yükleniyorsa optimizing ekranında kal
+      if (loading) {
+        setAppState('optimizing');
+        console.log('App.tsx useEffect: Setting appState to optimizing (profile still loading).');
+        return;
+      }
+      
       if (!profile) {
-        // Kullanıcı oturum açmış ama profili henüz yüklenmemiş veya yok
+        // Kullanıcı oturum açmış ama profili yok
         setAppState('profile-setup');
-        console.log('App.tsx useEffect: Setting appState to profile-setup (no profile found or still loading).');
+        console.log('App.tsx useEffect: Setting appState to profile-setup (no profile found).');
       } else if (!profile.isProfileComplete) {
         setAppState('profile-setup');
         console.log('App.tsx useEffect: Setting appState to profile-setup (profile incomplete).');
@@ -110,7 +130,7 @@ function App() {
     // useAuth hook'u authUser ve profile durumunu güncelleyecek, useEffect durumu yönetecek.
   };
 
-  const handleProfileSetupComplete = async (profileData: any) => {
+  const handleProfileSetupComplete = async (profileData: Partial<User>) => {
     if (authUser) {
       const result = await updateProfile({
         ...profileData,
@@ -126,11 +146,14 @@ function App() {
   };
 
   const handleStartChat = (country: string, purpose: Purpose) => {
+    console.log('App.tsx handleStartChat: Starting chat with', { country, purpose });
     setPendingChat({ country, purpose });
     setAppState('optimizing'); // Chat başlatılmadan önce optimizing ekranına geç
+    console.log('App.tsx handleStartChat: Set appState to optimizing');
   };
 
-  const handleOptimizationComplete = () => {
+  const handleOptimizationComplete = useCallback(() => {
+    console.log('App.tsx handleOptimizationComplete: Called with pendingChat:', pendingChat);
     if (pendingChat) {
       const newChat: Chat = {
         id: Date.now().toString(),
@@ -140,15 +163,20 @@ function App() {
         messages: []
       };
       
+      console.log('App.tsx handleOptimizationComplete: Creating new chat:', newChat);
       setPastChats(prev => [newChat, ...prev]);
       
       setCurrentChat(newChat);
       setPendingChat(null);
       setAppState('chat');
+      console.log('App.tsx handleOptimizationComplete: Set appState to chat');
+    } else {
+      console.log('App.tsx handleOptimizationComplete: No pendingChat found');
     }
-  };
+  }, [pendingChat, setPastChats]);
 
   const handleOpenChat = (chat: Chat) => {
+    console.log('App.tsx: Opening chat:', chat.id, 'with messages:', chat.messages?.length || 0);
     setCurrentChat(chat);
     setAppState('chat');
   };
@@ -159,7 +187,10 @@ function App() {
   };
 
   const handleUpdateChat = (updatedChat: Chat) => {
-    setCurrentChat(updatedChat);
+    // Only update if the chat actually changed
+    if (currentChat && currentChat.id === updatedChat.id) {
+      setCurrentChat(updatedChat);
+    }
   };
 
   const handleOpenProfile = () => {
@@ -190,7 +221,7 @@ function App() {
     setAppState('about');
   };
 
-  const handleUpdateProfile = async (updatedData: any) => {
+  const handleUpdateProfile = async (updatedData: Partial<User>) => {
     if (authUser) {
       const result = await updateProfile(updatedData);
       if (!result.error) {
@@ -294,7 +325,6 @@ function App() {
         <ResetPasswordPage
           onResetPassword={resetPassword}
           onBack={handleBackToAuth}
-          updatePassword={updatePassword}
         />
       );
 

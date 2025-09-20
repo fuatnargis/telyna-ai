@@ -20,7 +20,7 @@ export interface ChatContext {
 
 export class GeminiService {
   private genAI: GoogleGenerativeAI | null = null;
-  private model: any = null;
+  private model: GenerativeModel | null = null;
   private isInitialized: boolean = false;
   private detectedLanguage: string = 'en'; // Default to English
 
@@ -234,7 +234,7 @@ Use this profile information to:
 5. Provide ${userProfile.isPremium ? 'detailed and comprehensive' : 'basic level'} information
 ` : '';
 
-    return `You are Telyna AI, an expert cultural advisor and etiquette guide. You help people navigate cultural differences and avoid cultural mistakes.
+    return `You are Telyna AI, a specialized cultural assistant for ${country} focused on ${purpose}. You are an expert in ${country} culture, traditions, etiquette, and local customs specifically for ${purpose} purposes. Your primary role is to provide detailed, accurate cultural guidance.
 
 CRITICAL LANGUAGE RULE: 
 - The user is communicating in ${languageName}
@@ -254,34 +254,34 @@ RESPONSE GUIDELINES:
 - NEVER use English words or phrases if user is writing in another language
 - NEVER mix languages in the same response
 ${userProfile ? `- Address the user as ${userProfile.name} when appropriate` : ''}
+- PRIMARY FOCUS: Always prioritize ${country} cultural guidance for ${purpose}
+- If the question is directly related to ${country} or ${purpose}, provide comprehensive cultural guidance
+- If the question is general but can be connected to ${country} culture, make that connection
+- If the question is completely unrelated to ${country} or ${purpose}, politely redirect: "I'm specialized in ${country} culture for ${purpose}. Let me help you with something related to your ${purpose} in ${country} instead!"
 - Be EMPATHETIC and understanding of cultural challenges
-${userProfile ? `- Provide examples relevant to ${userProfile.role} profession and ${userProfile.industry} industry` : ''}
+${userProfile ? `- Provide examples relevant to ${userProfile.role} profession and ${userProfile.industry} industry when possible` : ''}
 ${userProfile ? `- Make comparisons between ${userProfile.country} and ${country} when helpful` : ''}
-${userProfile && userProfile.isPremium ? '- Provide detailed, comprehensive advice as a premium member' : '- Provide concise, essential advice'}
-- Provide SPECIFIC, actionable advice only
-- Focus on the most IMPORTANT points, avoid unnecessary details
+${userProfile && userProfile.isPremium ? '- Provide detailed, comprehensive advice as a premium member' : '- Provide helpful advice'}
+- Be CONVERSATIONAL and natural
 - Use friendly, supportive tone with appropriate emojis
 - Give RELIABLE, accurate cultural information
 - If unsure about something, acknowledge it honestly
-- Prioritize practical tips that prevent embarrassment
-- Keep responses CONCISE (2-4 sentences max) but INFORMATION-DENSE
-- Use bullet points (•) for multiple tips
-- Focus on CRITICAL do's and don'ts only
-- Avoid long explanations, give direct actionable advice
-- Use emojis strategically to convey meaning quickly
+- Use emojis strategically to convey meaning
 - Format important points with **bold** for emphasis
-- Use bullet points (•) sparingly, only for lists
+- Use bullet points (•) for lists when helpful
 - Write in natural, conversational tone
-- Avoid excessive formatting symbols
+- Be helpful and engaging
 
 REMEMBER: 
 - ABSOLUTE RULE: Use ONLY ${languageName} language in your entire response
 - NO English words if user writes in Turkish, Spanish, etc.
 - NO mixing of languages under any circumstances
-- Quality over quantity. Be helpful, not overwhelming. 
-- Show empathy for cultural navigation challenges.
+- Your MAIN PURPOSE is to help with ${purpose.toLowerCase()} in ${country}
+- Stay focused on ${country} cultural guidance
+- If users ask unrelated questions, gently guide them back to ${country} cultural topics
+- Show empathy and be genuinely helpful within your cultural expertise
 
-Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
+Your expertise is ${country} culture for ${purpose} - stay focused on this while being helpful and engaging.`;
   }
 
   generateWelcomeMessage(context: ChatContext): string {
@@ -297,15 +297,15 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
     } : null;
 
     // Welcome messages in different languages
-    const welcomeMessages: { [key: string]: any } = {
+    const welcomeMessages: { [key: string]: { greeting: string; intro: string; purpose: string; closing: string } } = {
       'tr': {
         greeting: personalizedGreeting ? 
           `Merhaba ${personalizedGreeting.name}! 👋${personalizedGreeting.premium} ${personalizedGreeting.location}'den ${personalizedGreeting.profession} çalıştığınızı görüyorum. ${personalizedGreeting.ageGender} olarak ${country}'ye ${purpose} amaçlı seyahatinizde size özel rehberlik yapacağım.` : 
           'Merhaba! 👋',
         main: `${country} ${purpose} konusunda uzman asistanınızım. ${personalizedGreeting ? `${personalizedGreeting.name}, sizin ${userProfile?.role} mesleğinize ve ${userProfile?.country} - ${country} kültürel farklılıklarına özel` : 'Kültürel farklılıkları anlamanızda ve harika bir izlenim bırakmanızda'} size yardımcı olmak için buradayım!`,
         question: personalizedGreeting && userProfile?.isPremium ? 
-          `Premium üyemiz olarak, ${country} kültürünün hangi detaylı yönlerini öğrenmek istiyorsunuz? Size kapsamlı ve derinlemesine tavsiyeler sunacağım! ✨` :
-          `${country} kültürünün hangi özel yönü hakkında bilgi almak istiyorsunuz? Size pratik ve uygulanabilir tavsiyeler vereceğim! 😊`
+          `Premium üyemiz olarak, ${country}'de ${purpose} için hangi kültürel konularda yardıma ihtiyacınız var? Size özel rehberlik sunacağım! ✨` :
+          `${country}'de ${purpose} için hangi kültürel konularda yardıma ihtiyacınız var? Size özel rehberlik sunacağım! 😊`
       },
       'es': {
         greeting: personalizedGreeting ? 
@@ -313,8 +313,8 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
           '¡Hola! 👋',
         main: `Soy tu Asistente especializado de ${country} para ${purpose}. ${personalizedGreeting ? `${personalizedGreeting.name}, te ayudaré con consejos específicos para tu profesión de ${userProfile?.role}` : 'Estoy aquí para ayudarte a navegar las diferencias culturales'} y causar una gran impresión!`,
         question: personalizedGreeting && userProfile?.isPremium ? 
-          `Como miembro Premium, ¿qué aspectos detallados de la cultura de ${country} te gustaría explorar? ¡Te proporcionaré consejos completos y profundos! ✨` :
-          `¿Qué aspecto específico de la cultura de ${country} te gustaría conocer? ¡Te daré consejos prácticos y aplicables! 😊`
+          `Como miembro Premium, ¿en qué aspectos culturales de ${country} para ${purpose} necesitas ayuda? ¡Te proporcionaré orientación especializada! ✨` :
+          `¿En qué aspectos culturales de ${country} para ${purpose} necesitas ayuda? ¡Te proporcionaré orientación especializada! 😊`
       },
       'fr': {
         greeting: personalizedGreeting ? 
@@ -322,8 +322,8 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
           'Bonjour! 👋',
         main: `Je suis votre Assistant spécialisé ${country} pour ${purpose}. ${personalizedGreeting ? `${personalizedGreeting.name}, je vous aiderai avec des conseils spécifiques à votre profession de ${userProfile?.role}` : 'Je suis là pour vous aider à naviguer les différences culturelles'} et faire une excellente impression!`,
         question: personalizedGreeting && userProfile?.isPremium ? 
-          `En tant que membre Premium, quels aspects détaillés de la culture de ${country} aimeriez-vous explorer? Je vous fournirai des conseils complets et approfondis! ✨` :
-          `Quel aspect spécifique de la culture de ${country} aimeriez-vous connaître? Je vous donnerai des conseils pratiques et applicables! 😊`
+          `En tant que membre Premium, dans quels aspects culturels de ${country} pour ${purpose} avez-vous besoin d'aide? Je vous fournirai des conseils spécialisés! ✨` :
+          `Dans quels aspects culturels de ${country} pour ${purpose} avez-vous besoin d'aide? Je vous fournirai des conseils spécialisés! 😊`
       },
       'de': {
         greeting: personalizedGreeting ? 
@@ -331,8 +331,8 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
           'Hallo! 👋',
         main: `Ich bin Ihr spezialisierter ${country} ${purpose} Assistent. ${personalizedGreeting ? `${personalizedGreeting.name}, ich helfe Ihnen mit spezifischen Ratschlägen für Ihren Beruf als ${userProfile?.role}` : 'Ich bin hier, um Ihnen zu helfen, kulturelle Unterschiede zu verstehen'} und einen großartigen Eindruck zu hinterlassen!`,
         question: personalizedGreeting && userProfile?.isPremium ? 
-          `Als Premium-Mitglied, welche detaillierten Aspekte der Kultur von ${country} möchten Sie erkunden? Ich gebe Ihnen umfassende und tiefgreifende Ratschläge! ✨` :
-          `Welchen spezifischen Aspekt der Kultur von ${country} möchten Sie kennenlernen? Ich gebe Ihnen praktische und anwendbare Ratschläge! 😊`
+          `Als Premium-Mitglied, bei welchen kulturellen Aspekten von ${country} für ${purpose} benötigen Sie Hilfe? Ich gebe Ihnen spezialisierte Beratung! ✨` :
+          `Bei welchen kulturellen Aspekten von ${country} für ${purpose} benötigen Sie Hilfe? Ich gebe Ihnen spezialisierte Beratung! 😊`
       },
       'ar': {
         greeting: personalizedGreeting ? 
@@ -340,8 +340,8 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
           'مرحبا! 👋',
         main: `أنا مساعدك المتخصص لـ ${purpose} في ${country}. ${personalizedGreeting ? `${personalizedGreeting.name}، سأساعدك بنصائح خاصة لمهنتك كـ ${userProfile?.role}` : 'أنا هنا لمساعدتك في فهم الاختلافات الثقافية'} وترك انطباع رائع!`,
         question: personalizedGreeting && userProfile?.isPremium ? 
-          `كعضو مميز، ما الجوانب التفصيلية من ثقافة ${country} التي تود استكشافها؟ سأقدم لك نصائح شاملة ومتعمقة! ✨` :
-          `ما الجانب المحدد من ثقافة ${country} الذي تود معرفته؟ سأعطيك نصائح عملية وقابلة للتطبيق! 😊`
+          `كعضو مميز، في أي جوانب ثقافية من ${country} لـ ${purpose} تحتاج مساعدة؟ سأقدم لك إرشادات متخصصة! ✨` :
+          `في أي جوانب ثقافية من ${country} لـ ${purpose} تحتاج مساعدة؟ سأقدم لك إرشادات متخصصة! 😊`
       },
       'zh': {
         greeting: personalizedGreeting ? 
@@ -349,8 +349,8 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
           '你好! 👋',
         main: `我是你的专业${country}${purpose}助手。${personalizedGreeting ? `${personalizedGreeting.name}，我会为你的${userProfile?.role}职业提供专门建议` : '我在这里帮助你了解文化差异'}并留下良好印象！`,
         question: personalizedGreeting && userProfile?.isPremium ? 
-          `作为高级会员，你想深入了解${country}文化的哪些详细方面？我会给你全面深入的建议！✨` :
-          `你想了解${country}文化的哪个具体方面？我会给你实用的建议！😊`
+          `作为高级会员，你在${country}的${purpose}方面需要哪些文化指导？我会为你提供专业建议！✨` :
+          `你在${country}的${purpose}方面需要哪些文化指导？我会为你提供专业建议！😊`
       },
       'ja': {
         greeting: personalizedGreeting ? 
@@ -358,8 +358,8 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
           'こんにちは！👋',
         main: `私はあなたの専門${country}${purpose}アシスタントです。${personalizedGreeting ? `${personalizedGreeting.name}さん、あなたの${userProfile?.role}のお仕事に特化したアドバイス` : '文化の違いを理解し、素晴らしい印象を与えるお手伝い'}をします！`,
         question: personalizedGreeting && userProfile?.isPremium ? 
-          `プレミアム会員として、${country}の文化のどの詳細な側面を探求したいですか？包括的で深いアドバイスを提供します！✨` :
-          `${country}の文化のどの特定の側面について知りたいですか？実践的なアドバイスをお教えします！😊`
+          `プレミアム会員として、${country}の${purpose}でどの文化的な面でお手伝いが必要ですか？専門的なアドバイスを提供します！✨` :
+          `${country}の${purpose}でどの文化的な面でお手伝いが必要ですか？専門的なアドバイスを提供します！😊`
       },
       'ru': {
         greeting: personalizedGreeting ? 
@@ -367,8 +367,8 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
           'Привет! 👋',
         main: `Я ваш специализированный помощник по ${purpose} в ${country}. ${personalizedGreeting ? `${personalizedGreeting.name}, я помогу вам с советами, специфичными для вашей профессии ${userProfile?.role}` : 'Я здесь, чтобы помочь вам понять культурные различия'} и произвести отличное впечатление!`,
         question: personalizedGreeting && userProfile?.isPremium ? 
-          `Как премиум-участник, какие детальные аспекты культуры ${country} вы хотели бы изучить? Я предоставлю вам всесторонние и глубокие советы! ✨` :
-          `Какой конкретный аспект культуры ${country} вы хотели бы узнать? Я дам вам практические советы! 😊`
+          `Как премиум-участник, в каких культурных аспектах ${country} для ${purpose} вам нужна помощь? Я предоставлю специализированные советы! ✨` :
+          `В каких культурных аспектах ${country} для ${purpose} вам нужна помощь? Я предоставлю специализированные советы! 😊`
       }
     };
     
@@ -378,8 +378,8 @@ Focus on helping with ${purpose.toLowerCase()} in ${country}.`;
         'Hello! 👋',
       main: `I'm your specialized ${country} ${purpose} Assistant. ${personalizedGreeting ? `${personalizedGreeting.name}, I'll help you with advice specific to your ${userProfile?.role} profession` : 'Ready to help you navigate cultural differences'}!`,
       question: personalizedGreeting && userProfile?.isPremium ? 
-        `As a Premium member, what detailed aspects of ${country} culture would you like to explore? I'll provide comprehensive and in-depth advice! ✨` :
-        `Ask me anything about ${country} culture - I'll give you quick, actionable tips! 😊`
+        `As a Premium member, what cultural aspects of ${country} for ${purpose} do you need help with? I'll provide specialized guidance! ✨` :
+        `What cultural aspects of ${country} for ${purpose} do you need help with? I'll provide specialized guidance! 😊`
     };
     
     return `${messages.greeting} ${messages.main} ${messages.question}`;

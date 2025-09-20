@@ -3,7 +3,7 @@ import { countries } from '../../data/countries';
 import { useAuth } from '../../hooks/useAuth';
 
 interface ProfileSetupPageProps {
-  onComplete: (profileData: any) => void;
+  onComplete: (profileData: Record<string, unknown>) => void;
 }
 
 export default function ProfileSetupPage({ onComplete }: ProfileSetupPageProps) {

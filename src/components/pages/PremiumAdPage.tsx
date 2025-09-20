@@ -51,7 +51,7 @@ export default function PremiumAdPage({ onContinue, onSkip }: PremiumAdPageProps
       clearInterval(interval);
       clearTimeout(skipTimer);
     };
-  }, []);
+  }, [premiumFeatures.length]);
 
   const benefits = [
     "Unlimited AI conversations",

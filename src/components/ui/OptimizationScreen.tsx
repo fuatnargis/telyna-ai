@@ -11,19 +11,24 @@ export default function OptimizationScreen({ country, purpose, onComplete }: Opt
   const [progress, setProgress] = useState(0);
 
   useEffect(() => {
+    console.log('OptimizationScreen: Starting optimization for', { country, purpose });
     const interval = setInterval(() => {
       setProgress((prev) => {
         if (prev < 100) {
           return prev + 1;
         }
         clearInterval(interval);
-        setTimeout(onComplete, 500); // Complete after a short delay
+        console.log('OptimizationScreen: Progress complete, calling onComplete in 500ms');
+        setTimeout(() => {
+          console.log('OptimizationScreen: Calling onComplete now');
+          onComplete();
+        }, 500); // Complete after a short delay
         return 100;
       });
     }, 30); // Adjust speed as needed
 
     return () => clearInterval(interval);
-  }, [onComplete]);
+  }, [country, purpose]); // Remove onComplete from dependencies to prevent infinite loop
 
   return (
     <div className="flex flex-col h-screen justify-center items-center p-6 text-center bg-gradient-to-br from-slate-900 via-blue-900 to-purple-900 text-white">
