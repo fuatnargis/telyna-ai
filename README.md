@@ -1,12 +1,18 @@
 # 🌍 Telyna AI - Cultural Travel Assistant
 
-[![Live Demo](https://img.shields.io/badge/Live%20Demo-Firebase%20Hosting-blue)](https://your-firebase-url.web.app)
+[![Live Demo](https://img.shields.io/badge/Live%20Demo-Firebase%20Hosting-blue)](https://telynaai.web.app)
 [![React](https://img.shields.io/badge/React-18.2.0-blue)](https://reactjs.org/)
 [![TypeScript](https://img.shields.io/badge/TypeScript-5.0-blue)](https://www.typescriptlang.org/)
 [![Firebase](https://img.shields.io/badge/Firebase-Hosting%20%26%20Auth-orange)](https://firebase.google.com/)
 [![AI](https://img.shields.io/badge/AI-Google%20Gemini-green)](https://ai.google.dev/)
 
 A sophisticated multilingual AI-powered cultural travel assistant that helps users navigate cultural differences and provides personalized guidance for their travel purposes. Built with modern web technologies and AI integration.
+
+## 🚀 **Live Demo**
+
+**👉 [Try the App Now](https://telynaai.web.app) 👈**
+
+Experience the full functionality with real AI-powered cultural guidance in 9 languages!
 
 ## 🎯 **Application Purpose**
 
