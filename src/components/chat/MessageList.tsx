@@ -29,8 +29,15 @@ export default function MessageList({ messages, isLoadingInitial }: MessageListP
   };
 
   const formatAIMessage = (content: string): string => {
+    // Güvenli HTML escape fonksiyonu
+    const escapeHtml = (text: string): string => {
+      const div = document.createElement('div');
+      div.textContent = text;
+      return div.innerHTML;
+    };
+
     return content
-      .replace(/\*\*(.*?)\*\*/g, '<strong class="font-semibold text-yellow-200">$1</strong>')
+      .replace(/\*\*(.*?)\*\*/g, (match, p1) => `<strong class="font-semibold text-yellow-200">${escapeHtml(p1)}</strong>`)
       .replace(/•\s/g, '<span class="inline-block w-2 h-2 bg-yellow-300 rounded-full mr-2 mt-2"></span>')
       .replace(/\n/g, '<br>')
       .replace(/([\u{1F600}-\u{1F64F}]|[\u{1F300}-\u{1F5FF}]|[\u{1F680}-\u{1F6FF}]|[\u{1F1E0}-\u{1F1FF}]|[\u{2600}-\u{26FF}]|[\u{2700}-\u{27BF}])/gu, '<span class="text-lg">$1</span>')
