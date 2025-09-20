@@ -8,6 +8,18 @@
 
 A sophisticated multilingual AI-powered cultural travel assistant that helps users navigate cultural differences and provides personalized guidance for their travel purposes. Built with modern web technologies and AI integration.
 
+## 🎯 **Application Purpose**
+
+**Telyna AI** is designed to bridge cultural gaps for travelers by providing:
+
+- **Cultural Guidance**: Real-time advice on local customs, etiquette, and traditions
+- **Language Support**: 9 languages with automatic detection and response
+- **Purpose-Specific Help**: Tailored advice for business, tourism, education, or other travel purposes
+- **AI-Powered Insights**: Advanced cultural understanding through Google Gemini AI
+- **Personalized Experience**: User profile-based recommendations and guidance
+
+**Target Users**: Business travelers, tourists, students, expats, and anyone planning to visit a foreign country and wants to understand local culture better.
+
 ## ✨ Key Features
 
 - 🌍 **Multi-language Support**: 9 languages (Turkish, English, Spanish, French, German, Arabic, Chinese, Japanese, Russian)
@@ -199,3 +211,4 @@ This project is licensed under the MIT License - see the [LICENSE](LICENSE) file
 - Firebase for authentication and hosting services
 - React and TypeScript communities for excellent documentation
 - Tailwind CSS for utility-first styling approach
+açıkla
